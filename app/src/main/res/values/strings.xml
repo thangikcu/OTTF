@@ -1,3 +1,9 @@
 <resources>
-    <string name="app_name">Project1</string>
+    <string name="app_name">1 2 3 4</string>
+    <string name="splash">Splash screen</string>
+    <string name="background">Background</string>
+    <string name="logo">Logo</string>
+    <string name="img_topic">Image Topic</string>
+    <string name="img_thing">Image Thing</string>
+    <string name="game_over">Trò chơi kết thúc</string>
 </resources>
