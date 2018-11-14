@@ -1,15 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SplashActivity">
+    android:background="@drawable/img_background"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".ui.SplashScreenActivity">
+
 
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:contentDescription="@string/splash"
-        android:scaleType="fitXY"
-        android:src="@drawable/img_splash" />
+        android:id="@+id/imgSpeech"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:contentDescription="@string/image_speech"
+        android:src="@drawable/img_speech" />
 
-</android.support.constraint.ConstraintLayout>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/logo"
+        android:src="@drawable/img_logo" />
+
+</LinearLayout>

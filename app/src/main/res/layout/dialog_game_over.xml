@@ -47,7 +47,7 @@
             android:id="@+id/btnReplay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/btn_replay"
+            android:background="@drawable/dlg_btn_replay_selector"
             android:minWidth="42dp" />
 
         <Button
@@ -56,14 +56,14 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:background="@drawable/btn_share"
+            android:background="@drawable/dlg_btn_share_selector"
             android:minWidth="42dp" />
 
         <Button
-            android:id="@+id/btnHamburger"
+            android:id="@+id/btnChooseTopic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/btn_hamburger"
+            android:background="@drawable/dlg_btn_choose_topic_selector"
             android:minWidth="42dp" />
 
     </GridLayout>

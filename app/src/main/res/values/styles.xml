@@ -9,4 +9,8 @@
         <item name="android:windowFullscreen">true</item>
     </style>
 
+    <style name="DialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_in_from_top</item>
+    </style>
+
 </resources>

@@ -2,8 +2,16 @@
     <string name="app_name">1 2 3 4</string>
     <string name="splash">Splash screen</string>
     <string name="background">Background</string>
+    <string name="image_speech">Speech</string>
     <string name="logo">Logo</string>
     <string name="img_topic">Image Topic</string>
     <string name="img_thing">Image Thing</string>
     <string name="game_over">Trò chơi kết thúc</string>
+    <string name="information">Thông tin</string>
+    <string name="app_full_name">1 2 3 4 - English Vocabulary</string>
+    <string name="copyright">\u00a9 Le Thanh Hai</string>
+    <string name="email">Email: l8hailt@gmail.com</string>
+    <string name="close">Đóng</string>
+    <string name="version">Phiên bản:\u0020</string>
+
 </resources>
