@@ -8,6 +8,7 @@ import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
@@ -15,6 +16,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.GridLayout;
@@ -117,12 +120,17 @@ public class PlayActivity extends AppCompatActivity implements Constant {
             animateAndSpeakButtonAnswer();
 
             if (guessValue.equals(answerValue)) {
+
+                soundEffect(R.raw.correct_sound);
                 ++score;
-                tvScore.setText(String.valueOf(score));
+                changeScore();
 
             } else {
+
+                soundEffect(R.raw.incorrect_sound);
                 --heart;
-                tvHeart.setText(String.valueOf(heart));
+                changeHeart();
+
                 if (heart == 0) {
                     if (score > restoreHighScore()) {
                         saveHighScore(score);
@@ -283,6 +291,23 @@ public class PlayActivity extends AppCompatActivity implements Constant {
             }
 
         }
+    }
+
+    private void changeHeart() {
+        Animation zoom = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in_and_out);
+        tvHeart.startAnimation(zoom);
+        tvHeart.setText(String.valueOf(heart));
+    }
+
+    private void changeScore() {
+        Animation zoom = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in_and_out);
+        tvScore.startAnimation(zoom);
+        tvScore.setText(String.valueOf(score));
+    }
+
+    private void soundEffect(int sound) {
+        MediaPlayer checkSound = MediaPlayer.create(getApplicationContext(), sound);
+        checkSound.start();
     }
 
     private void showGameOverDialog() {

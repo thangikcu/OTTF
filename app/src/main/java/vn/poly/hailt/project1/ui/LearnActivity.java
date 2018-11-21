@@ -1,18 +1,21 @@
 package vn.poly.hailt.project1.ui;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.LayoutManager;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -24,7 +27,6 @@ import vn.poly.hailt.project1.model.Vocabulary;
 public class LearnActivity extends AppCompatActivity {
 
     private ImageView imgBack;
-    private TextView tvHeader;//Tên chủ đề
 
     private TextView tvEnglish;
     private CardView cvImage;
@@ -32,7 +34,6 @@ public class LearnActivity extends AppCompatActivity {
     private TextView tvVietnamese;
     private RecyclerView lvImage;
 
-    private ImageAdapter adapter;
     private List<Vocabulary> vocabularies;
 
     private TextToSpeech tts;
@@ -48,27 +49,73 @@ public class LearnActivity extends AppCompatActivity {
         initTTS();
         initActions();
         initData();
-
-        adapter = new ImageAdapter(this, vocabularies);
-        lvImage.setHasFixedSize(true);
-        lvImage.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        lvImage.setAdapter(adapter);
         loadVocabulary(vocabularies.get(0));
-        adapter.setOnItemClickListener(new ImageAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View itemView, int position) {
-                index = position;
-                Vocabulary vocabulary = vocabularies.get(position);
-                loadVocabulary(vocabulary);
-                speakVocabulary();
-            }
-        });
+        initRecyclerView();
 
     }
 
     private void speakVocabulary() {
         String toSpeak = vocabularies.get(index).english;
         tts.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+    }
+
+    private void animateAndSpeakVocabulary(List<View> views, final Vocabulary vocabulary) {
+        for (int i = 0; i < views.size(); i++) {
+            ObjectAnimator objAnimFadeOut = ObjectAnimator.ofFloat(views.get(i), "alpha", 1f, 0f);
+            objAnimFadeOut.setDuration(500);
+            ObjectAnimator objAnimFadeIn = ObjectAnimator.ofFloat(views.get(i), "alpha", 0f, 1f);
+            objAnimFadeIn.setDuration(500);
+            AnimatorSet anim = new AnimatorSet();
+            anim.play(objAnimFadeOut).before(objAnimFadeIn);
+            anim.start();
+
+            objAnimFadeOut.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    loadVocabulary(vocabulary);
+                    speakVocabulary();
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
+        }
+
+    }
+
+    private void loadVocabulary(Vocabulary vocabulary) {
+        tvEnglish.setText(vocabulary.english);
+        Glide.with(this).load(vocabulary.imageLink).into(imgThing);
+        tvVietnamese.setText(vocabulary.vietnamese);
+    }
+
+    private void initRecyclerView() {
+        ImageAdapter adapter = new ImageAdapter(this, vocabularies);
+        lvImage.setHasFixedSize(true);
+        lvImage.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        lvImage.setAdapter(adapter);
+
+        adapter.setOnItemClickListener(new ImageAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View itemView, int position) {
+                index = position;
+                Vocabulary vocabulary = vocabularies.get(position);
+                List<View> views = Arrays.asList(tvEnglish, cvImage, imgThing, tvVietnamese);
+                animateAndSpeakVocabulary(views, vocabulary);
+            }
+        });
     }
 
     private void initTTS() {
@@ -80,12 +127,6 @@ public class LearnActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    private void loadVocabulary(Vocabulary vocabulary) {
-        tvEnglish.setText(vocabulary.english);
-        Glide.with(this).load(vocabulary.imageLink).into(imgThing);
-        tvVietnamese.setText(vocabulary.vietnamese);
     }
 
     private void initData() {
@@ -116,7 +157,7 @@ public class LearnActivity extends AppCompatActivity {
     private void initViews() {
         View iclHeader = findViewById(R.id.iclHeader);
         imgBack = iclHeader.findViewById(R.id.imgBack);
-        tvHeader = iclHeader.findViewById(R.id.tvHeader);
+        TextView tvHeader = iclHeader.findViewById(R.id.tvHeader);
         tvHeader.setText(getIntent().getStringExtra("topic"));
 
         tvEnglish = findViewById(R.id.tvEnglish);
