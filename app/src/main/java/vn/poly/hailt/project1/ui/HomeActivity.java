@@ -1,7 +1,7 @@
 package vn.poly.hailt.project1.ui;
 
 import android.app.Dialog;
-import android.support.v4.app.FragmentManager;
+import android.database.Cursor;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -22,6 +22,7 @@ import android.widget.ToggleButton;
 import vn.poly.hailt.project1.BackgroundSoundService;
 import vn.poly.hailt.project1.Constant;
 import vn.poly.hailt.project1.R;
+import vn.poly.hailt.project1.adapter.DataAdapter;
 import vn.poly.hailt.project1.fragment.ChooseTopicFragment;
 
 public class HomeActivity extends AppCompatActivity implements Constant {
@@ -30,20 +31,16 @@ public class HomeActivity extends AppCompatActivity implements Constant {
     private Button btnPlay;
     private ToggleButton tgbSound;
     private Button btnInformation;
-    private Intent intent;
     private ChooseTopicFragment fragChooseTopic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
+        Log.e("onCreate", "onCreate");
         initViews();
         initActions();
         initBackgroundSound();
-
-        intent = new Intent(HomeActivity.this, ChooseTopicActivity.class);
-
     }
 
     private void initViews() {
@@ -58,19 +55,24 @@ public class HomeActivity extends AppCompatActivity implements Constant {
         btnLearn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                intent.putExtra("keyAct", 0);
-//                startActivity(intent);
-//                overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
                 showChooseTopicFragment();
+
+                Bundle bundle = new Bundle();
+                bundle.putInt("keyAct", 0);
+
+                fragChooseTopic.setArguments(bundle);
             }
         });
 
         btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                intent.putExtra("keyAct", 1);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+                showChooseTopicFragment();
+
+                Bundle bundle = new Bundle();
+                bundle.putInt("keyAct", 1);
+
+                fragChooseTopic.setArguments(bundle);
             }
         });
 
@@ -151,26 +153,28 @@ public class HomeActivity extends AppCompatActivity implements Constant {
                     .show(fragChooseTopic);
         }
         ft.commit();
-        Log.e("isShow", String.valueOf(!fragChooseTopic.isHidden()));
     }
 
     @Override
     public void onBackPressed() {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        if (!fragChooseTopic.isHidden()) {
+        if (!fragChooseTopic.isHidden() && fragChooseTopic.isAdded()) {
             ft
                     .setCustomAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
                     .hide(fragChooseTopic)
                     .commit();
-            return;
+
+        } else {
+            super.onBackPressed();
         }
-        super.onBackPressed();
+
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        startService(new Intent(HomeActivity.this, BackgroundSoundService.class));
+    protected void onRestart() {
+        super.onRestart();
+        Log.e("onRestart", "onRestart");
+//        startService(new Intent(HomeActivity.this, BackgroundSoundService.class));
     }
 
     @Override

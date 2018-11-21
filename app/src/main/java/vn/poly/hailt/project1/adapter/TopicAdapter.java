@@ -7,18 +7,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
 import java.util.List;
 
 import vn.poly.hailt.project1.R;
-import vn.poly.hailt.project1.model.Vocabulary;
+import vn.poly.hailt.project1.model.Topic;
 
-public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageHolder> {
+public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicHolder> {
 
     private Context context;
-    private List<Vocabulary> vocabularies;
+    private List<Topic> topics;
     private OnItemClickListener listener;
 
     public interface OnItemClickListener {
@@ -29,40 +30,41 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageHolder>
         this.listener = listener;
     }
 
-    public ImageAdapter(Context context, List<Vocabulary> vocabularies) {
+    public TopicAdapter(Context context, List<Topic> topics) {
         this.context = context;
-        this.vocabularies = vocabularies;
+        this.topics = topics;
     }
 
     @NonNull
     @Override
-    public ImageHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_image, parent, false);
-        return new ImageHolder(view);
+    public TopicHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.item_topic, parent, false);
+        return new TopicHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ImageHolder holder, int position) {
-        Vocabulary vocabulary = vocabularies.get(position);
-        Glide.with(context)
-                .load(vocabulary.imageLink)
-                .into((holder.imgThing));
+    public void onBindViewHolder(@NonNull TopicHolder holder, int position) {
+        Topic topic = topics.get(position);
+        Glide.with(context).load(topic.imageLink).into(holder.imgTopic);
+        holder.tvTopic.setText(topic.name);
     }
 
     @Override
     public int getItemCount() {
-        if (vocabularies == null) return 0;
-        return vocabularies.size();
+        if (topics == null) return 0;
+        return topics.size();
     }
 
-    class ImageHolder extends RecyclerView.ViewHolder {
+    class TopicHolder extends RecyclerView.ViewHolder {
 
-        private final ImageView imgThing;
+        final ImageView imgTopic;
+        final TextView tvTopic;
 
-        ImageHolder(final View itemView) {
+        TopicHolder(final View itemView) {
             super(itemView);
 
-            imgThing = itemView.findViewById(R.id.imgThing);
+            imgTopic = itemView.findViewById(R.id.imgTopic);
+            tvTopic = itemView.findViewById(R.id.tvTopic);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -75,5 +77,4 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageHolder>
 
         }
     }
-
 }

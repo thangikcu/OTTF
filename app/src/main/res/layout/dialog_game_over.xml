@@ -22,7 +22,7 @@
         android:layout_below="@id/tvTitle"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="18dp"
-        android:text="Điểm của bạn: 0"
+        android:text="@string/your_score"
         android:textColor="@color/colorTextPrimary"
         android:textSize="24sp" />
 
@@ -33,7 +33,7 @@
         android:layout_below="@id/tvYourScore"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="16dp"
-        android:text="Điểm cao: 0"
+        android:text="@string/high_score"
         android:textColor="@color/colorTextPrimary"
         android:textSize="24sp" />
 

@@ -10,22 +10,29 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.SplashScreenActivity">
+        <activity
+            android:name=".ui.SplashScreenActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.HomeActivity" />
-        <activity android:name=".ui.ChooseTopicActivity" />
-        <activity android:name=".ui.LearnActivity" />
-        <activity android:name=".ui.PlayActivity" />
+        <activity
+            android:name=".ui.HomeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.LearnActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.PlayActivity"
+            android:screenOrientation="portrait" />
 
         <service
             android:name=".BackgroundSoundService"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="true" />
     </application>
 
 </manifest>

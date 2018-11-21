@@ -2,16 +2,15 @@ package vn.poly.hailt.project1.model;
 
 public class Vocabulary {
     public int id;
+    public int idTopic;
     public String english;
-    public int linkImage;
-    public String vietnameses;
-    public String answerA;
-    public String answerB;
-    public String answerC;
-    public String answerD;
-    public int trueAnswer;
+    public String imageLink;
+    public String vietnamese;
+    public String caseA;
+    public String caseB;
+    public String caseC;
+    public String caseD;
 
-    public Vocabulary(int linkImage) {
-        this.linkImage = linkImage;
+    public Vocabulary() {
     }
 }

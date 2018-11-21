@@ -13,5 +13,10 @@
     <string name="email">Email: l8hailt@gmail.com</string>
     <string name="close">Đóng</string>
     <string name="version">Phiên bản:\u0020</string>
+    <string name="img_back">Image Back</string>
+    <string name="your_score">Điểm của bạn: %1$d</string>
+    <string name="high_score">Điểm cao: %1$d</string>
+    <string name="default_score">0</string>
+    <string name="default_heart">4</string>
 
 </resources>
