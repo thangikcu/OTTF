@@ -18,7 +18,6 @@
         android:layout_below="@id/iclHeader"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="36dp"
-        android:text="Empty"
         android:textColor="@color/colorTextPrimary"
         android:textSize="24sp" />
 
@@ -47,7 +46,6 @@
         android:layout_below="@id/cvImage"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
-        android:text="Trống"
         android:textColor="@color/colorTextPrimary"
         android:textSize="24sp" />
 

@@ -90,12 +90,13 @@ public class DataAdapter implements Constant {
         return topics;
     }
 
-    public List<Vocabulary> getData() {
+    public List<Vocabulary> getData(int idTopic) {
         List<Vocabulary> vocabularies = new ArrayList<>();
 
-        String selectQuery = "SELECT * FROM " + VOCABULARIES_TABLE;
+        String sql = "SELECT * FROM " + VOCABULARIES_TABLE + " WHERE " + CM_COL_ID_TOPIC + " = ?";
+        String[] selectionArgs = {String.valueOf(idTopic)};
 
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        Cursor cursor = db.rawQuery(sql, selectionArgs);
 
         if (cursor.moveToFirst()) {
             do {

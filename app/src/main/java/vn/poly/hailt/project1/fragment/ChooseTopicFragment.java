@@ -30,7 +30,6 @@ public class ChooseTopicFragment extends Fragment {
 
     private List<Topic> topics;
     private RecyclerView lvTopic;
-    private TopicAdapter adapter;
 
     @Nullable
     @Override
@@ -41,7 +40,7 @@ public class ChooseTopicFragment extends Fragment {
         initActions();
         initData();
 
-        adapter = new TopicAdapter(getContext(), topics);
+        TopicAdapter adapter = new TopicAdapter(getContext(), topics);
         lvTopic.setHasFixedSize(true);
         lvTopic.setLayoutManager(new GridLayoutManager(getContext(), 2));
         lvTopic.setAdapter(adapter);
@@ -51,10 +50,12 @@ public class ChooseTopicFragment extends Fragment {
                 int keyAct = getArguments().getInt("keyAct");
                 if (keyAct == 0) {
                     Intent intent = new Intent(getContext(), LearnActivity.class);
+                    intent.putExtra("id", topics.get(position).id);
                     intent.putExtra("topic", topics.get(position).name);
                     startActivity(intent);
                 } else {
                     Intent intent = new Intent(getContext(), PlayActivity.class);
+                    intent.putExtra("id", topics.get(position).id);
                     intent.putExtra("topic", topics.get(position).name);
                     startActivity(intent);
                 }

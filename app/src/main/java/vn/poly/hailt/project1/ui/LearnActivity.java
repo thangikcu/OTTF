@@ -49,7 +49,8 @@ public class LearnActivity extends AppCompatActivity {
         initTTS();
         initActions();
         initData();
-        loadVocabulary(vocabularies.get(0));
+        if (vocabularies.size() > 0)
+            loadVocabulary(vocabularies.get(0));
         initRecyclerView();
 
     }
@@ -96,9 +97,11 @@ public class LearnActivity extends AppCompatActivity {
     }
 
     private void loadVocabulary(Vocabulary vocabulary) {
-        tvEnglish.setText(vocabulary.english);
-        Glide.with(this).load(vocabulary.imageLink).into(imgThing);
-        tvVietnamese.setText(vocabulary.vietnamese);
+        if (vocabularies != null) {
+            tvEnglish.setText(vocabulary.english);
+            Glide.with(this).load(vocabulary.imageLink).into(imgThing);
+            tvVietnamese.setText(vocabulary.vietnamese);
+        }
     }
 
     private void initRecyclerView() {
@@ -133,7 +136,7 @@ public class LearnActivity extends AppCompatActivity {
         DataAdapter dataAdapter = new DataAdapter(this);
         dataAdapter.createDatabase();
         dataAdapter.open();
-        vocabularies = dataAdapter.getData();
+        vocabularies = dataAdapter.getData(getIntent().getIntExtra("id", 1));
         dataAdapter.close();
     }
 

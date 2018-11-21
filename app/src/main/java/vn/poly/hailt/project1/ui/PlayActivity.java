@@ -88,7 +88,7 @@ public class PlayActivity extends AppCompatActivity implements Constant {
         DataAdapter dataAdapter = new DataAdapter(this);
         dataAdapter.createDatabase();
         dataAdapter.open();
-        vocabularies = dataAdapter.getData();
+        vocabularies = dataAdapter.getData(getIntent().getIntExtra("id", 1));
         dataAdapter.close();
         Collections.shuffle(vocabularies);
     }
@@ -194,14 +194,16 @@ public class PlayActivity extends AppCompatActivity implements Constant {
     }
 
     private void initVocabulary() {
-        Vocabulary vocabulary = vocabularies.get(currentVocabulary);
+        if (vocabularies.size() > 0) {
+            Vocabulary vocabulary = vocabularies.get(currentVocabulary);
 
-        Glide.with(this).load(vocabulary.imageLink).into(imgThing);
-        tvVietnamese.setText(vocabulary.vietnamese);
-        btnCaseA.setText(vocabulary.caseA);
-        btnCaseB.setText(vocabulary.caseB);
-        btnCaseC.setText(vocabulary.caseC);
-        btnCaseD.setText(vocabulary.caseD);
+            Glide.with(this).load(vocabulary.imageLink).into(imgThing);
+            tvVietnamese.setText(vocabulary.vietnamese);
+            btnCaseA.setText(vocabulary.caseA);
+            btnCaseB.setText(vocabulary.caseB);
+            btnCaseC.setText(vocabulary.caseC);
+            btnCaseD.setText(vocabulary.caseD);
+        }
     }
 
     private void nextVocabulary(List<View> views) {
