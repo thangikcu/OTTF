@@ -20,6 +20,4 @@ public interface Constant {
     String VC_COL_CASE_B = "CaseB";
     String VC_COL_CASE_C = "CaseC";
     String VC_COL_CASE_D = "CaseD";
-
-
 }

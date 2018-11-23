@@ -19,4 +19,7 @@
     <string name="default_score">0</string>
     <string name="default_heart">4</string>
 
+    <string name="facebook_app_id">1805614062898528</string>
+    <string name="fb_login_protocol_scheme">fb1805614062898528</string>
+
 </resources>

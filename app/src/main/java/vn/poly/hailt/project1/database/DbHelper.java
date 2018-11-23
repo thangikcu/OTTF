@@ -23,7 +23,7 @@ public class DbHelper extends SQLiteOpenHelper implements Constant {
     private Context context;
 
     public DbHelper(Context context) {
-        super(context, DB_NAME, null, 2);
+        super(context, DB_NAME, null, 1);
 
         if (android.os.Build.VERSION.SDK_INT >= 17) {
             DB_PATH = context.getApplicationInfo().dataDir + "/databases/";

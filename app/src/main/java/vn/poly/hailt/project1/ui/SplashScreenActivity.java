@@ -14,7 +14,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash);
+        setContentView(R.layout.activity_splash_screen);
 
         ImageView imgSpeech = findViewById(R.id.imgSpeech);
         ObjectAnimator animator = ObjectAnimator.ofFloat(imgSpeech, "alpha", 0f, 1f);

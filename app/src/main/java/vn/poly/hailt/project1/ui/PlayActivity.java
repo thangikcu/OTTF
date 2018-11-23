@@ -25,6 +25,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareDialog;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -60,6 +62,9 @@ public class PlayActivity extends AppCompatActivity implements Constant {
     private int score = 0;
     private int heart = 4;
 
+    private ShareDialog shareDialog;
+    private ShareLinkContent shareLinkContent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,7 +86,6 @@ public class PlayActivity extends AppCompatActivity implements Constant {
             btnGuess.setTextSize(16);
             btnGuess.setOnClickListener(btnGuessListener);
         }
-
     }
 
     private void initData() {
@@ -109,6 +113,8 @@ public class PlayActivity extends AppCompatActivity implements Constant {
         btnCaseC = findViewById(R.id.btnCaseC);
         btnCaseD = findViewById(R.id.btnCaseD);
         grlCase = findViewById(R.id.grlCase);
+
+        shareDialog = new ShareDialog(this);
     }
 
     private View.OnClickListener btnGuessListener = new View.OnClickListener() {
@@ -324,7 +330,7 @@ public class PlayActivity extends AppCompatActivity implements Constant {
         TextView tvYourScore = dialog.findViewById(R.id.tvYourScore);
         TextView tvHighScore = dialog.findViewById(R.id.tvHighScore);
         Button btnReplay = dialog.findViewById(R.id.btnReplay);
-//        Button btnShare = dialog.findViewById(R.id.btnShare);
+        Button btnShare = dialog.findViewById(R.id.btnShare);
         Button btnChooseTopic = dialog.findViewById(R.id.btnChooseTopic);
 
         tvYourScore.setText(getString(R.string.your_score, score));
@@ -342,6 +348,18 @@ public class PlayActivity extends AppCompatActivity implements Constant {
                 initVocabulary();
                 enableButtonGuess();
                 dialog.dismiss();
+            }
+        });
+
+        btnShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ShareDialog.canShow(ShareLinkContent.class)) {
+                    shareLinkContent = new ShareLinkContent.Builder()
+
+                            .build();
+                }
+                shareDialog.show(shareLinkContent);
             }
         });
 
