@@ -1,4 +1,4 @@
-package vn.poly.hailt.project1;
+package vn.poly.hailt.ottf;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

@@ -1,4 +1,4 @@
-package vn.poly.hailt.project1.adapter;
+package vn.poly.hailt.ottf.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -10,10 +10,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import vn.poly.hailt.project1.Constant;
-import vn.poly.hailt.project1.database.DbHelper;
-import vn.poly.hailt.project1.model.Topic;
-import vn.poly.hailt.project1.model.Vocabulary;
+import vn.poly.hailt.ottf.Constant;
+import vn.poly.hailt.ottf.database.DbHelper;
+import vn.poly.hailt.ottf.model.Topic;
+import vn.poly.hailt.ottf.model.Vocabulary;
 
 public class DataAdapter implements Constant {
     private static String TAG = "DataAdapter";
@@ -27,17 +27,16 @@ public class DataAdapter implements Constant {
         dbHelper = new DbHelper(context);
     }
 
-    public DataAdapter createDatabase() throws SQLException {
+    public void createDatabase() throws SQLException {
         try {
             dbHelper.createDatabase();
         } catch (IOException mIOException) {
             Log.e(TAG, mIOException.toString() + "  UnableToCreateDatabase");
             throw new Error("UnableToCreateDatabase");
         }
-        return this;
     }
 
-    public DataAdapter open() throws SQLException {
+    public void open() throws SQLException {
         try {
             dbHelper.openDataBase();
             dbHelper.close();
@@ -46,26 +45,10 @@ public class DataAdapter implements Constant {
             Log.e(TAG, "open >>" + mSQLException.toString());
             throw mSQLException;
         }
-        return this;
     }
 
     public void close() {
         dbHelper.close();
-    }
-
-    public Cursor getTestData() {
-        try {
-            String sql = "SELECT * FROM Numbers";
-
-            Cursor mCur = db.rawQuery(sql, null);
-            if (mCur != null) {
-                mCur.moveToNext();
-            }
-            return mCur;
-        } catch (SQLException mSQLException) {
-            Log.e(TAG, "getTestData >>" + mSQLException.toString());
-            throw mSQLException;
-        }
     }
 
     public List<Topic> getTopics() {
@@ -90,7 +73,7 @@ public class DataAdapter implements Constant {
         return topics;
     }
 
-    public List<Vocabulary> getData(int idTopic) {
+    public List<Vocabulary> getVocabularies(int idTopic) {
         List<Vocabulary> vocabularies = new ArrayList<>();
 
         String sql = "SELECT * FROM " + VOCABULARIES_TABLE + " WHERE " + CM_COL_ID_TOPIC + " = ?";

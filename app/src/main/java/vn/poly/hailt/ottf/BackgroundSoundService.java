@@ -1,4 +1,4 @@
-package vn.poly.hailt.project1;
+package vn.poly.hailt.ottf;
 
 import android.app.Service;
 import android.content.Intent;
@@ -52,21 +52,17 @@ public class BackgroundSoundService extends Service {
     float volume = 0;
 
     private void startFadeIn() {
-        final int FADE_DURATION = 1000; //The duration of the fade
-        //The amount of time between volume changes. The smaller this is, the smoother the fade
+        final int FADE_DURATION = 1000;
         final int FADE_INTERVAL = 250;
-        final int MAX_VOLUME = 1; //The volume will increase from 0 to 1
-        int numberOfSteps = FADE_DURATION / FADE_INTERVAL; //Calculate the number of fade steps
-        //Calculate by how much the volume changes each step
+        final int MAX_VOLUME = 1;
+        int numberOfSteps = FADE_DURATION / FADE_INTERVAL;
         final float deltaVolume = MAX_VOLUME / (float) numberOfSteps;
 
-        //Create a new Timer and Timer task to run the fading outside the main UI thread
         timer = new Timer(true);
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
-                fadeInStep(deltaVolume); //Do a fade step
-                //Cancel and Purge the Timer if the desired volume has been reached
+                fadeInStep(deltaVolume);
                 if (volume >= 1f) {
                     timer.cancel();
                     timer.purge();

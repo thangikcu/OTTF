@@ -1,4 +1,4 @@
-package vn.poly.hailt.project1.fragment;
+package vn.poly.hailt.ottf.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,12 +15,12 @@ import android.widget.ImageView;
 
 import java.util.List;
 
-import vn.poly.hailt.project1.R;
-import vn.poly.hailt.project1.adapter.DataAdapter;
-import vn.poly.hailt.project1.adapter.TopicAdapter;
-import vn.poly.hailt.project1.model.Topic;
-import vn.poly.hailt.project1.ui.LearnActivity;
-import vn.poly.hailt.project1.ui.PlayActivity;
+import vn.poly.hailt.ottf.R;
+import vn.poly.hailt.ottf.adapter.DataAdapter;
+import vn.poly.hailt.ottf.adapter.TopicAdapter;
+import vn.poly.hailt.ottf.model.Topic;
+import vn.poly.hailt.ottf.ui.LearnActivity;
+import vn.poly.hailt.ottf.ui.PlayActivity;
 
 public class ChooseTopicFragment extends Fragment {
 

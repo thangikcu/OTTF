@@ -1,4 +1,4 @@
-package vn.poly.hailt.project1.ui;
+package vn.poly.hailt.ottf.ui;
 
 import android.animation.ObjectAnimator;
 import android.content.Intent;
@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
 
-import vn.poly.hailt.project1.R;
+import vn.poly.hailt.ottf.R;
 
 public class SplashScreenActivity extends AppCompatActivity {
 

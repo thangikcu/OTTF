@@ -1,4 +1,4 @@
-package vn.poly.hailt.project1.model;
+package vn.poly.hailt.ottf.model;
 
 public class Topic {
     public int id;

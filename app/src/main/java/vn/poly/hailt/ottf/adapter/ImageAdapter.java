@@ -1,4 +1,4 @@
-package vn.poly.hailt.project1.adapter;
+package vn.poly.hailt.ottf.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -12,8 +12,8 @@ import com.bumptech.glide.Glide;
 
 import java.util.List;
 
-import vn.poly.hailt.project1.R;
-import vn.poly.hailt.project1.model.Vocabulary;
+import vn.poly.hailt.ottf.R;
+import vn.poly.hailt.ottf.model.Vocabulary;
 
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageHolder> {
 

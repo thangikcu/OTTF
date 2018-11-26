@@ -1,4 +1,4 @@
-package vn.poly.hailt.project1.ui;
+package vn.poly.hailt.ottf.ui;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
@@ -33,10 +33,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import vn.poly.hailt.project1.Constant;
-import vn.poly.hailt.project1.R;
-import vn.poly.hailt.project1.adapter.DataAdapter;
-import vn.poly.hailt.project1.model.Vocabulary;
+import vn.poly.hailt.ottf.Constant;
+import vn.poly.hailt.ottf.R;
+import vn.poly.hailt.ottf.adapter.DataAdapter;
+import vn.poly.hailt.ottf.model.Vocabulary;
 
 public class PlayActivity extends AppCompatActivity implements Constant {
 
@@ -92,7 +92,7 @@ public class PlayActivity extends AppCompatActivity implements Constant {
         DataAdapter dataAdapter = new DataAdapter(this);
         dataAdapter.createDatabase();
         dataAdapter.open();
-        vocabularies = dataAdapter.getData(getIntent().getIntExtra("id", 1));
+        vocabularies = dataAdapter.getVocabularies(getIntent().getIntExtra("id", 1));
         dataAdapter.close();
         Collections.shuffle(vocabularies);
     }
@@ -123,6 +123,7 @@ public class PlayActivity extends AppCompatActivity implements Constant {
             Button btnGuess = ((Button) v);
             String guessValue = btnGuess.getText().toString();
             String answerValue = vocabularies.get(currentVocabulary).english;
+            btnGuess.setTextColor(Color.RED);
             animateAndSpeakButtonAnswer();
 
             if (guessValue.equals(answerValue)) {
@@ -175,7 +176,6 @@ public class PlayActivity extends AppCompatActivity implements Constant {
             }
         }
     };
-
 
     private void initActions() {
         imgBack.setOnClickListener(new View.OnClickListener() {
@@ -259,6 +259,7 @@ public class PlayActivity extends AppCompatActivity implements Constant {
         for (int button = 0; button < grlCase.getChildCount(); button++) {
             Button btnGuess = (Button) grlCase.getChildAt(button);
             btnGuess.setEnabled(true);
+            btnGuess.setTextColor(Color.BLACK);
             btnGuess.setBackgroundResource(R.drawable.btn_guess);
         }
     }

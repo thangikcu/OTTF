@@ -1,4 +1,4 @@
-package vn.poly.hailt.project1;
+package vn.poly.hailt.ottf;
 
 public interface Constant {
     String PREF_SOUND = "SoundPref";

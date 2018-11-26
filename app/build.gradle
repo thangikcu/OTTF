@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 27
     defaultConfig {
-        applicationId "vn.poly.hailt.project1"
+        applicationId "vn.poly.hailt.ottf"
         minSdkVersion 15
         targetSdkVersion 27
         versionCode 1

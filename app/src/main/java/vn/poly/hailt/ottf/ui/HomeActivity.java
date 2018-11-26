@@ -1,7 +1,6 @@
-package vn.poly.hailt.project1.ui;
+package vn.poly.hailt.ottf.ui;
 
 import android.app.Dialog;
-import android.database.Cursor;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -19,11 +18,10 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import vn.poly.hailt.project1.BackgroundSoundService;
-import vn.poly.hailt.project1.Constant;
-import vn.poly.hailt.project1.R;
-import vn.poly.hailt.project1.adapter.DataAdapter;
-import vn.poly.hailt.project1.fragment.ChooseTopicFragment;
+import vn.poly.hailt.ottf.BackgroundSoundService;
+import vn.poly.hailt.ottf.Constant;
+import vn.poly.hailt.ottf.R;
+import vn.poly.hailt.ottf.fragment.ChooseTopicFragment;
 
 public class HomeActivity extends AppCompatActivity implements Constant {
 
@@ -174,7 +172,7 @@ public class HomeActivity extends AppCompatActivity implements Constant {
     protected void onRestart() {
         super.onRestart();
         Log.e("onRestart", "onRestart");
-//        startService(new Intent(HomeActivity.this, BackgroundSoundService.class));
+        initBackgroundSound();
     }
 
     @Override
