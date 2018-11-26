@@ -45,6 +45,7 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicHolder>
     @Override
     public void onBindViewHolder(@NonNull TopicHolder holder, int position) {
         Topic topic = topics.get(position);
+
         Glide.with(context).load(topic.imageLink).into(holder.imgTopic);
         holder.tvTopic.setText(topic.name);
     }

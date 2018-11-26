@@ -12,5 +12,6 @@ public class Vocabulary {
     public String caseD;
 
     public Vocabulary() {
+
     }
 }
