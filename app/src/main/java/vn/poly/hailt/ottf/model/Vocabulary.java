@@ -14,4 +14,5 @@ public class Vocabulary {
     public Vocabulary() {
 
     }
+
 }

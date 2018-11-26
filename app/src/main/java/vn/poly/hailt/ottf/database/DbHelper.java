@@ -29,6 +29,7 @@ public class DbHelper extends SQLiteOpenHelper implements Constant {
         } else {
             DB_PATH = "/data/data/" + context.getPackageName() + "/databases/";
         }
+
         this.context = context;
     }
 

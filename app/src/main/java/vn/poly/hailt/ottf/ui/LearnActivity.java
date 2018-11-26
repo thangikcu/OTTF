@@ -52,7 +52,6 @@ public class LearnActivity extends AppCompatActivity {
         if (vocabularies.size() > 0)
             loadVocabulary(vocabularies.get(0));
         initRecyclerView();
-
     }
 
     private void speakVocabulary() {
