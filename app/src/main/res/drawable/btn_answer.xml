@@ -8,5 +8,5 @@
         android:height="67dp" />
     <stroke
         android:width="2dp"
-        android:color="@color/colorP" />
+        android:color="@color/colorPrimary" />
 </shape>

@@ -10,7 +10,6 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="24dp"
-        android:text="@string/game_over"
         android:textColor="@color/colorTextPrimary"
         android:textSize="24sp"
         android:textStyle="bold" />

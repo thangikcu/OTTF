@@ -6,7 +6,10 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Dialog;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -26,6 +29,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.model.SharePhoto;
+import com.facebook.share.model.SharePhotoContent;
 import com.facebook.share.widget.ShareDialog;
 
 import java.util.Arrays;
@@ -33,7 +38,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import vn.poly.hailt.ottf.Constant;
+import vn.poly.hailt.ottf.common.Constant;
 import vn.poly.hailt.ottf.R;
 import vn.poly.hailt.ottf.adapter.DataAdapter;
 import vn.poly.hailt.ottf.model.Vocabulary;
@@ -55,6 +60,7 @@ public class PlayActivity extends AppCompatActivity implements Constant {
 
     private Handler handler;
     private TextToSpeech tts;
+    private MediaPlayer checkSound;
 
     private List<Vocabulary> vocabularies;
 
@@ -62,8 +68,8 @@ public class PlayActivity extends AppCompatActivity implements Constant {
     private int score = 0;
     private int heart = 4;
 
+    private Dialog dlgGameOver;
     private ShareDialog shareDialog;
-    private ShareLinkContent shareLinkContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +77,7 @@ public class PlayActivity extends AppCompatActivity implements Constant {
         setContentView(R.layout.activity_play);
 
         handler = new Handler();
+        checkSound = new MediaPlayer();
 
         initData();
         initViews();
@@ -117,7 +124,7 @@ public class PlayActivity extends AppCompatActivity implements Constant {
         shareDialog = new ShareDialog(this);
     }
 
-    private View.OnClickListener btnGuessListener = new View.OnClickListener() {
+    private final View.OnClickListener btnGuessListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Button btnGuess = ((Button) v);
@@ -125,6 +132,7 @@ public class PlayActivity extends AppCompatActivity implements Constant {
             String answerValue = vocabularies.get(currentVocabulary).english;
             btnGuess.setTextColor(Color.RED);
             animateAndSpeakButtonAnswer();
+            disableButtonGuess();
 
             if (guessValue.equals(answerValue)) {
 
@@ -145,9 +153,9 @@ public class PlayActivity extends AppCompatActivity implements Constant {
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            showGameOverDialog();
+                            showGameOverDialog(getString(R.string.game_over));
                         }
-                    }, 2000);
+                    }, 1800);
                     return;
                 }
             }
@@ -159,19 +167,18 @@ public class PlayActivity extends AppCompatActivity implements Constant {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        showGameOverDialog();
+                        showGameOverDialog(getString(R.string.victory));
                     }
-                }, 2000);
+                }, 1800);
             } else {
                 ++currentVocabulary;
-                disableButtonGuess();
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         List<View> views = Arrays.asList(cvImage, imgThing, tvVietnamese, grlCase);
                         nextVocabulary(views);
                     }
-                }, 3000);
+                }, 1800);
 
             }
         }
@@ -215,9 +222,9 @@ public class PlayActivity extends AppCompatActivity implements Constant {
     private void nextVocabulary(List<View> views) {
         for (int i = 0; i < views.size(); i++) {
             ObjectAnimator objAnimFadeOut = ObjectAnimator.ofFloat(views.get(i), "alpha", 1f, 0f);
-            objAnimFadeOut.setDuration(500);
+            objAnimFadeOut.setDuration(400);
             ObjectAnimator objAnimFadeIn = ObjectAnimator.ofFloat(views.get(i), "alpha", 0f, 1f);
-            objAnimFadeIn.setDuration(500);
+            objAnimFadeIn.setDuration(400);
             AnimatorSet anim = new AnimatorSet();
             anim.play(objAnimFadeOut).before(objAnimFadeIn);
             anim.start();
@@ -270,7 +277,7 @@ public class PlayActivity extends AppCompatActivity implements Constant {
             if (btnGuess.getText().toString().equals(vocabularies.get(currentVocabulary).english)) {
                 ObjectAnimator anim = ObjectAnimator.ofInt(btnGuess, "backgroundResource",
                         R.drawable.btn_answer, R.drawable.btn_guess, R.drawable.btn_answer);
-                anim.setDuration(400);
+                anim.setDuration(300);
                 anim.setInterpolator(new LinearInterpolator());
                 anim.setRepeatMode(ValueAnimator.RESTART);
                 anim.setRepeatCount(2);
@@ -315,25 +322,28 @@ public class PlayActivity extends AppCompatActivity implements Constant {
     }
 
     private void soundEffect(int sound) {
-        MediaPlayer checkSound = MediaPlayer.create(getApplicationContext(), sound);
+        checkSound.reset();
+        checkSound = MediaPlayer.create(getApplicationContext(), sound);
         checkSound.start();
     }
 
-    private void showGameOverDialog() {
-        final Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.dialog_game_over);
-        dialog.setCancelable(false);
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+    private void showGameOverDialog(String title) {
+        dlgGameOver = new Dialog(this);
+        dlgGameOver.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dlgGameOver.setContentView(R.layout.dialog_game_over);
+        dlgGameOver.setCancelable(false);
+        dlgGameOver.setCanceledOnTouchOutside(false);
+        dlgGameOver.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dlgGameOver.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
 
-        TextView tvYourScore = dialog.findViewById(R.id.tvYourScore);
-        TextView tvHighScore = dialog.findViewById(R.id.tvHighScore);
-        Button btnReplay = dialog.findViewById(R.id.btnReplay);
-        Button btnShare = dialog.findViewById(R.id.btnShare);
-        Button btnChooseTopic = dialog.findViewById(R.id.btnChooseTopic);
+        TextView tvTitle = dlgGameOver.findViewById(R.id.tvTitle);
+        TextView tvYourScore = dlgGameOver.findViewById(R.id.tvYourScore);
+        TextView tvHighScore = dlgGameOver.findViewById(R.id.tvHighScore);
+        Button btnReplay = dlgGameOver.findViewById(R.id.btnReplay);
+        Button btnShare = dlgGameOver.findViewById(R.id.btnShare);
+        Button btnChooseTopic = dlgGameOver.findViewById(R.id.btnChooseTopic);
 
+        tvTitle.setText(title);
         tvYourScore.setText(getString(R.string.your_score, score));
         tvHighScore.setText(getString(R.string.high_score, restoreHighScore()));
 
@@ -348,32 +358,32 @@ public class PlayActivity extends AppCompatActivity implements Constant {
                 Collections.shuffle(vocabularies);
                 initVocabulary();
                 enableButtonGuess();
-                dialog.dismiss();
+                dlgGameOver.dismiss();
             }
         });
 
         btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (ShareDialog.canShow(ShareLinkContent.class)) {
-                    shareLinkContent = new ShareLinkContent.Builder()
-
-                            .build();
-                }
-                shareDialog.show(shareLinkContent);
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        shareScreenshot();
+                    }
+                }, 100);
             }
         });
 
         btnChooseTopic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.dismiss();
+                dlgGameOver.dismiss();
                 finish();
                 overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
             }
         });
 
-        dialog.show();
+        dlgGameOver.show();
     }
 
     private void saveHighScore(int highScore) {
@@ -388,11 +398,51 @@ public class PlayActivity extends AppCompatActivity implements Constant {
                 .getInt(HIGH_SCORE, 0);
     }
 
+    private Bitmap rootView() {
+        View v = getWindow().getDecorView().getRootView();
+        v.setDrawingCacheEnabled(true);
+        Bitmap bitmap = Bitmap.createBitmap(v.getDrawingCache());
+        v.setDrawingCacheEnabled(false);
+        return bitmap;
+    }
+
+    private Bitmap dialogView() {
+        View v = dlgGameOver.getWindow().getDecorView().getRootView();
+        v.setDrawingCacheEnabled(true);
+        Bitmap bitmap = Bitmap.createBitmap(v.getDrawingCache());
+        v.setDrawingCacheEnabled(false);
+        return bitmap;
+    }
+
+    private Bitmap takeScreenshot(Bitmap bmp1, Bitmap bmp2) {
+        Bitmap bmOverlay = Bitmap.createBitmap(bmp1.getWidth(), bmp1.getHeight(), bmp1.getConfig());
+        Canvas canvas = new Canvas(bmOverlay);
+        canvas.drawBitmap(bmp1, new Matrix(), null);
+        canvas.drawARGB(100, 0, 0, 0);
+        float centerX = (canvas.getWidth() - bmp2.getWidth()) / 2;
+        float centerY = (canvas.getHeight() - bmp2.getHeight()) / 2;
+        canvas.drawBitmap(bmp2, centerX, centerY, null);
+        return bmOverlay;
+    }
+
+    private void shareScreenshot() {
+        if (ShareDialog.canShow(ShareLinkContent.class)) {
+
+            SharePhoto photo = new SharePhoto.Builder()
+                    .setBitmap(takeScreenshot(rootView(), dialogView()))
+                    .build();
+            SharePhotoContent content = new SharePhotoContent.Builder()
+                    .addPhoto(photo)
+                    .build();
+            shareDialog.show(content);
+        }
+    }
+
     @Override
-    protected void onPause() {
+    protected void onDestroy() {
         tts.stop();
         tts.shutdown();
-        super.onPause();
+        super.onDestroy();
     }
 
     @Override

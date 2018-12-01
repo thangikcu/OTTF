@@ -10,20 +10,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import vn.poly.hailt.ottf.Constant;
+import vn.poly.hailt.ottf.common.Constant;
 import vn.poly.hailt.ottf.database.DbHelper;
 import vn.poly.hailt.ottf.model.Topic;
 import vn.poly.hailt.ottf.model.Vocabulary;
 
 public class DataAdapter implements Constant {
-    private static String TAG = "DataAdapter";
 
-    private Context context;
+    private static final String TAG = "DataAdapter";
+
     private SQLiteDatabase db;
-    private DbHelper dbHelper;
+    private final DbHelper dbHelper;
 
     public DataAdapter(Context context) {
-        this.context = context;
         dbHelper = new DbHelper(context);
     }
 

@@ -18,8 +18,8 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import vn.poly.hailt.ottf.BackgroundSoundService;
-import vn.poly.hailt.ottf.Constant;
+import vn.poly.hailt.ottf.service.BackgroundSoundService;
+import vn.poly.hailt.ottf.common.Constant;
 import vn.poly.hailt.ottf.R;
 import vn.poly.hailt.ottf.fragment.ChooseTopicFragment;
 

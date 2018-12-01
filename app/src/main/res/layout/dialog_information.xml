@@ -17,7 +17,6 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/tvAppFullName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="18dp"
@@ -34,7 +33,6 @@
         android:textSize="18sp" />
 
     <TextView
-        android:id="@+id/tvEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
@@ -43,7 +41,6 @@
         android:textSize="18sp" />
 
     <TextView
-        android:id="@+id/tvCopyright"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"

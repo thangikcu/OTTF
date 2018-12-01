@@ -1,6 +1,7 @@
 package vn.poly.hailt.ottf.model;
 
 public class Vocabulary {
+
     public int id;
     public int idTopic;
     public String english;

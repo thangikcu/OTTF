@@ -6,7 +6,8 @@
     android:background="@drawable/img_background"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".ui.SplashScreenActivity">
+    tools:context=".ui.SplashScreenActivity"
+    tools:ignore="Overdraw">
 
 
     <ImageView

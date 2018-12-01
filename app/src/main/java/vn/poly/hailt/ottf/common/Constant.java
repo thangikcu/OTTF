@@ -1,4 +1,4 @@
-package vn.poly.hailt.ottf;
+package vn.poly.hailt.ottf.common;
 
 public interface Constant {
     String PREF_SOUND = "SoundPref";
@@ -20,4 +20,7 @@ public interface Constant {
     String VC_COL_CASE_B = "CaseB";
     String VC_COL_CASE_C = "CaseC";
     String VC_COL_CASE_D = "CaseD";
+
+    String PREF_KEY_DB_VER = "dbVer";
+
 }

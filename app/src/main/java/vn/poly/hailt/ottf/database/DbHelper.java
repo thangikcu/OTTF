@@ -1,9 +1,11 @@
 package vn.poly.hailt.ottf.database;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.io.File;
@@ -12,17 +14,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import vn.poly.hailt.ottf.Constant;
+import vn.poly.hailt.ottf.common.Constant;
 
 public class DbHelper extends SQLiteOpenHelper implements Constant {
 
-    private static String DB_NAME = "Vocabularies.sqlite";
+    private static final String DB_NAME = "Vocabularies.sqlite";
     private static String DB_PATH = "";
+    private static int DB_VERSION = 1;
     private SQLiteDatabase db;
-    private Context context;
+    private final Context context;
 
     public DbHelper(Context context) {
-        super(context, DB_NAME, null, 1);
+        super(context, DB_NAME, null, DB_VERSION);
 
         if (android.os.Build.VERSION.SDK_INT >= 17) {
             DB_PATH = context.getApplicationInfo().dataDir + "/databases/";
@@ -35,6 +38,23 @@ public class DbHelper extends SQLiteOpenHelper implements Constant {
 
     public void createDatabase() throws IOException {
         boolean isDatabaseExist = checkDatabase();
+
+        if (isDatabaseExist) {
+            SharedPreferences prefs = PreferenceManager
+                    .getDefaultSharedPreferences(context);
+            int dbVersion = prefs.getInt(PREF_KEY_DB_VER, 1);
+            Log.e("DB_VER", dbVersion + "");
+            if (DB_VERSION != dbVersion) {
+                File dbFile = context.getDatabasePath(DB_NAME);
+                if (!dbFile.delete()) {
+                    Log.e("TAG", "Unable to update database");
+                } else {
+                    copyDatabase();
+                    Log.e("Update Database", "Database updated");
+                }
+            }
+        }
+
         if (!isDatabaseExist) {
             this.getReadableDatabase();
             this.close();
@@ -63,6 +83,11 @@ public class DbHelper extends SQLiteOpenHelper implements Constant {
             mOutput.write(mBuffer, 0, mLength);
         }
         mOutput.flush();
+        SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(PREF_KEY_DB_VER, DB_VERSION);
+        editor.apply();
         mOutput.close();
         mInput.close();
     }

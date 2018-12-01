@@ -53,7 +53,7 @@
             android:screenOrientation="portrait" />
 
         <service
-            android:name=".BackgroundSoundService"
+            android:name=".service.BackgroundSoundService"
             android:enabled="true"
             android:exported="true" />
 

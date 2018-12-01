@@ -62,9 +62,9 @@ public class LearnActivity extends AppCompatActivity {
     private void animateAndSpeakVocabulary(List<View> views, final Vocabulary vocabulary) {
         for (int i = 0; i < views.size(); i++) {
             ObjectAnimator objAnimFadeOut = ObjectAnimator.ofFloat(views.get(i), "alpha", 1f, 0f);
-            objAnimFadeOut.setDuration(500);
+            objAnimFadeOut.setDuration(400);
             ObjectAnimator objAnimFadeIn = ObjectAnimator.ofFloat(views.get(i), "alpha", 0f, 1f);
-            objAnimFadeIn.setDuration(500);
+            objAnimFadeIn.setDuration(400);
             AnimatorSet anim = new AnimatorSet();
             anim.play(objAnimFadeOut).before(objAnimFadeIn);
             anim.start();
@@ -170,12 +170,12 @@ public class LearnActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
+    protected void onDestroy() {
         if (tts != null) {
             tts.stop();
             tts.shutdown();
         }
-        super.onPause();
+        super.onDestroy();
     }
 
     @Override

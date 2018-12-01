@@ -1,7 +1,5 @@
 <resources>
     <string name="app_name">1 2 3 4</string>
-    <string name="splash">Splash screen</string>
-    <string name="background">Background</string>
     <string name="image_speech">Speech</string>
     <string name="logo">Logo</string>
     <string name="img_topic">Image Topic</string>
@@ -21,5 +19,7 @@
 
     <string name="facebook_app_id">1805614062898528</string>
     <string name="fb_login_protocol_scheme">fb1805614062898528</string>
+    <string name="victory">Chiến thắng</string>
+    <string name="topic">CHỦ ĐỀ</string>
 
 </resources>

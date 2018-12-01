@@ -18,8 +18,8 @@ import vn.poly.hailt.ottf.model.Topic;
 
 public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicHolder> {
 
-    private Context context;
-    private List<Topic> topics;
+    private final Context context;
+    private final List<Topic> topics;
     private OnItemClickListener listener;
 
     public interface OnItemClickListener {

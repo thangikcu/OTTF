@@ -1,4 +1,4 @@
-package vn.poly.hailt.ottf;
+package vn.poly.hailt.ottf.service;
 
 import android.app.Service;
 import android.content.Intent;
@@ -8,6 +8,8 @@ import android.os.IBinder;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import vn.poly.hailt.ottf.R;
 
 public class BackgroundSoundService extends Service {
 
@@ -49,10 +51,10 @@ public class BackgroundSoundService extends Service {
         media.start();
     }
 
-    float volume = 0;
+    private float volume = 0;
 
     private void startFadeIn() {
-        final int FADE_DURATION = 1000;
+        final int FADE_DURATION = 1500;
         final int FADE_INTERVAL = 250;
         final int MAX_VOLUME = 1;
         int numberOfSteps = FADE_DURATION / FADE_INTERVAL;

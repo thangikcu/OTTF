@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/img_background"
-    tools:context=".ui.LearnActivity">
+    tools:context=".ui.LearnActivity"
+    tools:ignore="Overdraw">
 
     <include
         android:id="@+id/iclHeader"

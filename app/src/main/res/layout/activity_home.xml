@@ -4,8 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/img_background"
-
-    tools:context=".ui.HomeActivity">
+    tools:context=".ui.HomeActivity"
+    tools:ignore="Overdraw">
 
 
     <RelativeLayout
@@ -70,6 +70,6 @@
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
 </RelativeLayout>

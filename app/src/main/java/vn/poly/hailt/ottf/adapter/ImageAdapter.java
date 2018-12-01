@@ -17,8 +17,8 @@ import vn.poly.hailt.ottf.model.Vocabulary;
 
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageHolder> {
 
-    private Context context;
-    private List<Vocabulary> vocabularies;
+    private final Context context;
+    private final List<Vocabulary> vocabularies;
     private OnItemClickListener listener;
 
     public interface OnItemClickListener {
