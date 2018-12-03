@@ -20,7 +20,7 @@ public class DbHelper extends SQLiteOpenHelper implements Constant {
 
     private static final String DB_NAME = "Vocabularies.sqlite";
     private static String DB_PATH = "";
-    private static int DB_VERSION = 1;
+    private static final int DB_VERSION = 1;
     private SQLiteDatabase db;
     private final Context context;
 

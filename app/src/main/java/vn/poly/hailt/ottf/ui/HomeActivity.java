@@ -8,20 +8,21 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import vn.poly.hailt.ottf.service.BackgroundSoundService;
-import vn.poly.hailt.ottf.common.Constant;
 import vn.poly.hailt.ottf.R;
+import vn.poly.hailt.ottf.common.Constant;
 import vn.poly.hailt.ottf.fragment.ChooseTopicFragment;
+import vn.poly.hailt.ottf.service.BackgroundSoundService;
 
 public class HomeActivity extends AppCompatActivity implements Constant {
 
@@ -31,11 +32,12 @@ public class HomeActivity extends AppCompatActivity implements Constant {
     private Button btnInformation;
     private ChooseTopicFragment fragChooseTopic;
 
+    private boolean doubleBackToExit = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        Log.e("onCreate", "onCreate");
         initViews();
         initActions();
         initBackgroundSound();
@@ -163,7 +165,20 @@ public class HomeActivity extends AppCompatActivity implements Constant {
                     .commit();
 
         } else {
-            super.onBackPressed();
+            if (doubleBackToExit) {
+                super.onBackPressed();
+                return;
+            }
+
+            this.doubleBackToExit = true;
+            Toast.makeText(this, getString(R.string.double_back_to_exit), Toast.LENGTH_SHORT).show();
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    doubleBackToExit = false;
+                }
+            }, 2000);
         }
 
     }
@@ -171,7 +186,6 @@ public class HomeActivity extends AppCompatActivity implements Constant {
     @Override
     protected void onRestart() {
         super.onRestart();
-        Log.e("onRestart", "onRestart");
         initBackgroundSound();
     }
 

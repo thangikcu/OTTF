@@ -21,5 +21,6 @@
     <string name="fb_login_protocol_scheme">fb1805614062898528</string>
     <string name="victory">Chiến thắng</string>
     <string name="topic">CHỦ ĐỀ</string>
+    <string name="double_back_to_exit">Ấn \"Quay lại\" một lần nữa để thoát</string>
 
 </resources>
