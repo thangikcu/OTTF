@@ -7,6 +7,9 @@ public interface Constant {
     String PREF_HIGH_SCORE = "HighScorePref";
     String HIGH_SCORE = "highScore";
 
+    String PREF_QUESTION_NUMBER = "QuestionNumberPref";
+    String QUESTION_NUMBER = "questionNumber";
+
     String TOPICS_TABLE = "Topics";
     String CM_COL_ID_TOPIC = "_idTopic";
     String TP_COL_TOPIC_NAME = "Name";

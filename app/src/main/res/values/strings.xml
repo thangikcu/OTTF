@@ -22,5 +22,9 @@
     <string name="victory">Chiến thắng</string>
     <string name="topic">CHỦ ĐỀ</string>
     <string name="double_back_to_exit">Ấn \"Quay lại\" một lần nữa để thoát</string>
+    <string name="choose_mode">Chọn chế độ</string>
+    <string name="selection_mode">Lựa chọn</string>
+    <string name="word_guess_mode">Ghép chữ</string>
+    <string name="question_number">Câu số %1$d</string>
 
 </resources>

@@ -67,12 +67,7 @@ public class HomeActivity extends AppCompatActivity implements Constant {
         btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showChooseTopicFragment();
-
-                Bundle bundle = new Bundle();
-                bundle.putInt("keyAct", 1);
-
-                fragChooseTopic.setArguments(bundle);
+                showChooseModeDialog();
             }
         });
 
@@ -103,18 +98,14 @@ public class HomeActivity extends AppCompatActivity implements Constant {
     private void initBackgroundSound() {
         SharedPreferences pref = getSharedPreferences(PREF_SOUND, MODE_PRIVATE);
         boolean sound = pref.getBoolean(IS_SOUND, true);
-        if (sound) {
-            startService(new Intent(HomeActivity.this, BackgroundSoundService.class));
-        } else {
-            tgbSound.setChecked(true);
-        }
+        if (sound) startService(new Intent(HomeActivity.this, BackgroundSoundService.class));
+        else tgbSound.setChecked(true);
     }
 
     private void showInformationDialog() {
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_information);
-        dialog.setCanceledOnTouchOutside(false);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
 
@@ -153,6 +144,40 @@ public class HomeActivity extends AppCompatActivity implements Constant {
                     .show(fragChooseTopic);
         }
         ft.commit();
+    }
+
+    private void showChooseModeDialog() {
+        final Dialog dlgChooseMode = new Dialog(this);
+        dlgChooseMode.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dlgChooseMode.setContentView(R.layout.dialog_choose_mode);
+        dlgChooseMode.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dlgChooseMode.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+
+        Button btnSelectionMode = dlgChooseMode.findViewById(R.id.btnSelectionMode);
+        Button btnWordGuessMode = dlgChooseMode.findViewById(R.id.btnWordGuessMode);
+
+        btnSelectionMode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showChooseTopicFragment();
+                Bundle bundle = new Bundle();
+                bundle.putInt("keyAct", 1);
+
+                fragChooseTopic.setArguments(bundle);
+                dlgChooseMode.dismiss();
+            }
+        });
+
+        btnWordGuessMode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(HomeActivity.this, WordGuessModeActivity.class));
+                overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+                dlgChooseMode.dismiss();
+            }
+        });
+
+        dlgChooseMode.show();
     }
 
     @Override

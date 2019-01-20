@@ -102,4 +102,28 @@ public class DataAdapter implements Constant {
         return vocabularies;
     }
 
+    public List<Vocabulary> getAllVocabularies() {
+        List<Vocabulary> vocabularies = new ArrayList<>();
+
+        String sql = "SELECT * FROM " + VOCABULARIES_TABLE + " ORDER BY " + VC_COL_ENGLISH;
+
+        Cursor cursor = db.rawQuery(sql, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Vocabulary vocabulary = new Vocabulary();
+                vocabulary.id = cursor.getInt(cursor.getColumnIndex(VC_COL_ID));
+                vocabulary.english = cursor.getString(cursor.getColumnIndex(VC_COL_ENGLISH));
+                vocabulary.imageLink = cursor.getString(cursor.getColumnIndex(CM_COL_IMAGE_LINK));
+                vocabulary.vietnamese = cursor.getString(cursor.getColumnIndex(VC_COL_VIETNAMESE));
+                vocabularies.add(vocabulary);
+
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+
+        return vocabularies;
+    }
+
 }
