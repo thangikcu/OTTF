@@ -189,9 +189,9 @@ public class WordGuessModeActivity extends AppCompatActivity implements Constant
                 if (guess.length() == vocabulary.length()) {
                     if (guess.equalsIgnoreCase(vocabulary)) {
                         Toast.makeText(WordGuessModeActivity.this, "Ting Ting!", Toast.LENGTH_SHORT).show();
+                        showAnswerDialog();
                     } else {
                         Toast.makeText(WordGuessModeActivity.this, "Te````````", Toast.LENGTH_SHORT).show();
-                        showAnswerDialog();
                     }
                 }
             }
@@ -216,10 +216,21 @@ public class WordGuessModeActivity extends AppCompatActivity implements Constant
     };
 
     private void showAnswerDialog() {
-        Dialog dialog = new Dialog(this, android.R.style.Theme_Light_NoTitleBar_Fullscreen);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.dialog_game_over);
-        dialog.show();
+        final Dialog dlgShowAnswer = new Dialog(this, android.R.style.Theme_Light_NoTitleBar_Fullscreen);
+        dlgShowAnswer.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dlgShowAnswer.setContentView(R.layout.dialog_show_answer);
+        dlgShowAnswer.getWindow().getAttributes().windowAnimations = R.style.FullScreenDialogAnimation;
+
+        Button btnContinue = dlgShowAnswer.findViewById(R.id.btnContinue);
+
+        btnContinue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dlgShowAnswer.dismiss();
+            }
+        });
+
+        dlgShowAnswer.show();
     }
 
 //    private void nextVocabulary(List<View> views) {

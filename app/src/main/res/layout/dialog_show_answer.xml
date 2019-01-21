@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/img_background"
+    android:orientation="vertical"
+    android:gravity="center_horizontal">
+
+    <!--<ImageView-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:src="@drawable/img_leaves" />-->
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_tv_congratulation"
+        android:paddingLeft="32dp"
+        android:paddingRight="32dp"
+        android:paddingBottom="4dp"
+        android:text="Correct"
+        android:textColor="@color/colorTextPrimary"
+        android:layout_marginTop="24dp"
+        android:textSize="48sp" />
+
+    <ImageView
+        android:layout_marginTop="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/img_speech_bg" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/img_logo" />
+
+    <Button
+        android:id="@+id/btnContinue"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_continue_selector"
+        />
+
+</LinearLayout>
