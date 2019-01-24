@@ -26,5 +26,13 @@
     <string name="selection_mode">Lựa chọn</string>
     <string name="word_guess_mode">Ghép chữ</string>
     <string name="question_number">Câu số %1$d</string>
+    <string name="intro_of_answer">Đáp án của câu hỏi này là</string>
+
+    <string-array name="congratulation_array">
+        <item>Chúc mừng</item>
+        <item>Chính xác</item>
+        <item>Tuyệt vời</item>
+        <item>Xuất sắc</item>
+    </string-array>
 
 </resources>

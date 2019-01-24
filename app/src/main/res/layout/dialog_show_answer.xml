@@ -2,44 +2,66 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/img_background"
-    android:orientation="vertical"
-    android:gravity="center_horizontal">
-
-    <!--<ImageView-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:src="@drawable/img_leaves" />-->
+    android:background="@drawable/bg_dlg_show_answer"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
 
     <TextView
+        android:id="@+id/tvCongratulation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:background="@drawable/bg_tv_congratulation"
+        android:paddingBottom="4dp"
         android:paddingLeft="32dp"
         android:paddingRight="32dp"
-        android:paddingBottom="4dp"
-        android:text="Correct"
         android:textColor="@color/colorTextPrimary"
-        android:layout_marginTop="24dp"
         android:textSize="48sp" />
 
-    <ImageView
-        android:layout_marginTop="24dp"
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/img_speech_bg" />
+        android:layout_marginTop="48dp">
+
+        <!--<ImageView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:contentDescription="@string/image_speech"-->
+        <!--android:src="@drawable/img_speech_bg" />-->
+
+        <TextView
+            android:id="@+id/tvAnswer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/img_speech_bg"
+            android:gravity="center"
+            android:paddingBottom="4dp"
+            android:textColor="@color/colorTextSecondary"
+            android:textSize="22sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="24dp"
+            android:text="@string/intro_of_answer"
+            android:textColor="@color/colorTextSecondary"
+            android:textSize="16sp" />
+
+    </RelativeLayout>
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/logo"
         android:src="@drawable/img_logo" />
 
     <Button
-        android:id="@+id/btnContinue"
+        android:id="@+id/btnNext"
         android:layout_width="wrap_content"
-        android:layout_marginTop="32dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/btn_continue_selector"
-        />
+        android:layout_marginTop="48dp"
+        android:background="@drawable/btn_next_selector"
+        android:visibility="invisible" />
 
 </LinearLayout>

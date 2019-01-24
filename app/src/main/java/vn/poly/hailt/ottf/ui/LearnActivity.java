@@ -10,6 +10,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,7 +30,7 @@ public class LearnActivity extends AppCompatActivity {
     private ImageView imgBack;
 
     private TextView tvEnglish;
-    private CardView cvImage;
+    private FrameLayout containerMainImage;
     private ImageView imgThing;
     private TextView tvVietnamese;
     private RecyclerView lvImage;
@@ -114,7 +115,7 @@ public class LearnActivity extends AppCompatActivity {
             public void onItemClick(View itemView, int position) {
                 index = position;
                 Vocabulary vocabulary = vocabularies.get(position);
-                List<View> views = Arrays.asList(tvEnglish, cvImage, imgThing, tvVietnamese);
+                List<View> views = Arrays.asList(tvEnglish, containerMainImage, imgThing, tvVietnamese);
                 animateAndSpeakVocabulary(views, vocabulary);
             }
         });
@@ -148,7 +149,7 @@ public class LearnActivity extends AppCompatActivity {
             }
         });
 
-        cvImage.setOnClickListener(new View.OnClickListener() {
+        containerMainImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 speakVocabulary();
@@ -163,7 +164,7 @@ public class LearnActivity extends AppCompatActivity {
         tvHeader.setText(getIntent().getStringExtra("topic"));
 
         tvEnglish = findViewById(R.id.tvEnglish);
-        cvImage = findViewById(R.id.cvImage);
+        containerMainImage = findViewById(R.id.containerMainImage);
         imgThing = findViewById(R.id.imgThing);
         tvVietnamese = findViewById(R.id.tvVietnamese);
         lvImage = findViewById(R.id.lvImage);

@@ -1,12 +1,15 @@
 package vn.poly.hailt.ottf.ui;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.util.SparseIntArray;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -31,11 +34,9 @@ import vn.poly.hailt.ottf.model.Vocabulary;
 
 public class WordGuessModeActivity extends AppCompatActivity implements Constant {
 
-    private View iclHeader;
     private ImageView imgBack;
     private TextView tvHeader;
 
-    private CardView cvImage;
     private ImageView imgThing;
     private TextView tvVietnamese;
 
@@ -64,6 +65,43 @@ public class WordGuessModeActivity extends AppCompatActivity implements Constant
         initActions();
 
         index = getSharedPreferences(PREF_QUESTION_NUMBER, MODE_PRIVATE).getInt(QUESTION_NUMBER, 0);
+
+        initPlayArea();
+    }
+
+    private void initViews() {
+        View iclHeader = findViewById(R.id.iclHeader);
+        imgBack = iclHeader.findViewById(R.id.imgBack);
+        tvHeader = iclHeader.findViewById(R.id.tvHeader);
+
+        imgThing = findViewById(R.id.imgThing);
+        tvVietnamese = findViewById(R.id.tvVietnamese);
+
+        flbAnswerArea = findViewById(R.id.flbAnswerArea);
+        flbGuessArea = findViewById(R.id.flbGuessArea);
+    }
+
+    private void initActions() {
+        imgBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
+            }
+        });
+
+    }
+
+    private void initData() {
+        DataAdapter dataAdapter = new DataAdapter(this);
+        dataAdapter.createDatabase();
+        dataAdapter.open();
+        vocabularies = dataAdapter.getAllVocabularies();
+        dataAdapter.close();
+    }
+
+    private void initPlayArea() {
+        tvHeader.setText(getString(R.string.question_number, index + 1));
         vocabulary = vocabularies.get(index).english;
 
         Glide.with(this).load(vocabularies.get(index).imageLink).into(imgThing);
@@ -96,6 +134,8 @@ public class WordGuessModeActivity extends AppCompatActivity implements Constant
 
                     button.setLayoutParams(lp);
                     button.setBackgroundResource(R.drawable.btn_guess);
+                    button.setTypeface(Typeface.DEFAULT_BOLD);
+                    button.setTextColor(getResources().getColor(R.color.colorPrimary));
                     flbAnswerArea.addView(button);
                 }
 
@@ -104,7 +144,8 @@ public class WordGuessModeActivity extends AppCompatActivity implements Constant
                     button.setText(lettersList.get(i));
                     button.setLayoutParams(lp);
                     button.setAllCaps(true);
-                    button.setBackgroundResource(R.drawable.btn_guess);
+                    button.setTextColor(getResources().getColor(R.color.colorTextPrimary));
+                    button.setBackgroundResource(R.drawable.btn_letter);
                     flbGuessArea.addView(button);
                 }
 
@@ -123,38 +164,6 @@ public class WordGuessModeActivity extends AppCompatActivity implements Constant
                 }
             }
         }, 100);
-    }
-
-    private void initViews() {
-        iclHeader = findViewById(R.id.iclHeader);
-        imgBack = iclHeader.findViewById(R.id.imgBack);
-        tvHeader = iclHeader.findViewById(R.id.tvHeader);
-
-        cvImage = findViewById(R.id.cvImage);
-        imgThing = findViewById(R.id.imgThing);
-        tvVietnamese = findViewById(R.id.tvVietnamese);
-
-        flbAnswerArea = findViewById(R.id.flbAnswerArea);
-        flbGuessArea = findViewById(R.id.flbGuessArea);
-    }
-
-    private void initActions() {
-        imgBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-                overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
-            }
-        });
-
-    }
-
-    private void initData() {
-        DataAdapter dataAdapter = new DataAdapter(this);
-        dataAdapter.createDatabase();
-        dataAdapter.open();
-        vocabularies = dataAdapter.getAllVocabularies();
-        dataAdapter.close();
     }
 
     private View.OnClickListener btnGuessListener = new View.OnClickListener() {
@@ -188,10 +197,13 @@ public class WordGuessModeActivity extends AppCompatActivity implements Constant
 
                 if (guess.length() == vocabulary.length()) {
                     if (guess.equalsIgnoreCase(vocabulary)) {
-                        Toast.makeText(WordGuessModeActivity.this, "Ting Ting!", Toast.LENGTH_SHORT).show();
                         showAnswerDialog();
                     } else {
-                        Toast.makeText(WordGuessModeActivity.this, "Te````````", Toast.LENGTH_SHORT).show();
+                        for (int i = 0; i < vocabulary.length(); i++) {
+                            Button btnAnswer = (Button) flbAnswerArea.getChildAt(i);
+                            btnAnswer.setTextColor(Color.RED);
+                        }
+                        Toast.makeText(WordGuessModeActivity.this, "Câu trả lời của bạn chưa đúng", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -208,6 +220,7 @@ public class WordGuessModeActivity extends AppCompatActivity implements Constant
             if (!btnAnswer.getText().equals("")) {
                 guess = "";
                 btnAnswer.setText("");
+                btnAnswer.setTextColor(getResources().getColor(R.color.colorPrimary));
 
                 Button btnGuess = (Button) flbGuessArea.getChildAt(indexOfButtonGuess);
                 btnGuess.setVisibility(View.VISIBLE);
@@ -221,16 +234,50 @@ public class WordGuessModeActivity extends AppCompatActivity implements Constant
         dlgShowAnswer.setContentView(R.layout.dialog_show_answer);
         dlgShowAnswer.getWindow().getAttributes().windowAnimations = R.style.FullScreenDialogAnimation;
 
-        Button btnContinue = dlgShowAnswer.findViewById(R.id.btnContinue);
+        TextView tvCongratulation = dlgShowAnswer.findViewById(R.id.tvCongratulation);
+        TextView tvAnswer = dlgShowAnswer.findViewById(R.id.tvAnswer);
+        final Button btnNext = dlgShowAnswer.findViewById(R.id.btnNext);
 
-        btnContinue.setOnClickListener(new View.OnClickListener() {
+        tvCongratulation.setText(generateCongratulation());
+        tvAnswer.setText(vocabulary);
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                btnNext.setVisibility(View.VISIBLE);
+            }
+        }, 1200);
+        index += 1;
+        guess = "";
+
+        flbAnswerArea.removeAllViews();
+        flbGuessArea.removeAllViews();
+
+
+        btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dlgShowAnswer.dismiss();
+                initPlayArea();
+            }
+        });
+
+        dlgShowAnswer.setOnKeyListener(new DialogInterface.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    dlgShowAnswer.dismiss();
+                    initPlayArea();
+                }
+                return true;
             }
         });
 
         dlgShowAnswer.show();
+    }
+
+    private String generateCongratulation() {
+        String[] arrCon = getResources().getStringArray(R.array.congratulation_array);
+        return arrCon[new Random().nextInt(arrCon.length)];
     }
 
 //    private void nextVocabulary(List<View> views) {
@@ -275,5 +322,11 @@ public class WordGuessModeActivity extends AppCompatActivity implements Constant
         SharedPreferences.Editor editor = pref.edit();
         editor.putInt(QUESTION_NUMBER, index);
         editor.apply();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
     }
 }

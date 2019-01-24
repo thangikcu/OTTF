@@ -16,13 +16,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -49,7 +49,7 @@ public class PlayActivity extends AppCompatActivity implements Constant {
 
     private TextView tvHeart;
     private TextView tvScore;
-    private CardView cvImage;
+    private FrameLayout containerMainImage;
     private ImageView imgThing;
     private TextView tvVietnamese;
     private Button btnCaseA;
@@ -112,7 +112,7 @@ public class PlayActivity extends AppCompatActivity implements Constant {
 
         tvHeart = findViewById(R.id.tvHeart);
         tvScore = findViewById(R.id.tvScore);
-        cvImage = findViewById(R.id.cvImage);
+        containerMainImage = findViewById(R.id.containerMainImage);
         imgThing = findViewById(R.id.imgThing);
         tvVietnamese = findViewById(R.id.tvVietnamese);
         btnCaseA = findViewById(R.id.btnCaseA);
@@ -175,7 +175,7 @@ public class PlayActivity extends AppCompatActivity implements Constant {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        List<View> views = Arrays.asList(cvImage, imgThing, tvVietnamese, grlCase);
+                        List<View> views = Arrays.asList(containerMainImage, imgThing, tvVietnamese, grlCase);
                         nextVocabulary(views);
                     }
                 }, 1800);
@@ -274,7 +274,10 @@ public class PlayActivity extends AppCompatActivity implements Constant {
     private void animateAndSpeakButtonAnswer() {
         for (int button = 0; button < grlCase.getChildCount(); button++) {
             final Button btnGuess = (Button) grlCase.getChildAt(button);
-            if (btnGuess.getText().toString().equals(vocabularies.get(currentVocabulary).english)) {
+            String guess = btnGuess.getText().toString();
+            String answer = vocabularies.get(currentVocabulary).english;
+
+            if (guess.equals(answer)) {
                 ObjectAnimator anim = ObjectAnimator.ofInt(btnGuess, "backgroundResource",
                         R.drawable.btn_answer, R.drawable.btn_guess, R.drawable.btn_answer);
                 anim.setDuration(300);
