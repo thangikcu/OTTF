@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/img_background"
-    tools:context=".ui.PlayActivity"
+    tools:context=".ui.SelectionModeActivity"
     tools:ignore="Overdraw">
 
     <RelativeLayout
@@ -86,28 +86,28 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:background="@drawable/btn_guess" />
+            android:background="@drawable/bg_btn_case_selector" />
 
         <Button
             android:id="@+id/btnCaseB"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:background="@drawable/btn_guess" />
+            android:background="@drawable/bg_btn_case_selector" />
 
         <Button
             android:id="@+id/btnCaseC"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:background="@drawable/btn_guess" />
+            android:background="@drawable/bg_btn_case_selector" />
 
         <Button
             android:id="@+id/btnCaseD"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:background="@drawable/btn_guess" />
+            android:background="@drawable/bg_btn_case_selector" />
 
     </GridLayout>
 

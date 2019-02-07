@@ -43,7 +43,7 @@ import vn.poly.hailt.ottf.R;
 import vn.poly.hailt.ottf.adapter.DataAdapter;
 import vn.poly.hailt.ottf.model.Vocabulary;
 
-public class PlayActivity extends AppCompatActivity implements Constant {
+public class SelectionModeActivity extends AppCompatActivity implements Constant {
 
     private ImageView imgBack;
 
@@ -74,7 +74,7 @@ public class PlayActivity extends AppCompatActivity implements Constant {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_play);
+        setContentView(R.layout.activity_selection_mode);
 
         handler = new Handler();
         checkSound = new MediaPlayer();
@@ -89,7 +89,7 @@ public class PlayActivity extends AppCompatActivity implements Constant {
 
             Button btnGuess = (Button) grlCase.getChildAt(button);
             btnGuess.setAllCaps(false);
-            btnGuess.setTextColor(getResources().getColor(R.color.colorTextSecondary));
+            btnGuess.setTextColor(getResources().getColor(R.color.colorTextPrimary));
             btnGuess.setTextSize(16);
             btnGuess.setOnClickListener(btnGuessListener);
         }
@@ -128,10 +128,11 @@ public class PlayActivity extends AppCompatActivity implements Constant {
         @Override
         public void onClick(View v) {
             Button btnGuess = ((Button) v);
+
             String guessValue = btnGuess.getText().toString();
             String answerValue = vocabularies.get(currentVocabulary).english;
-            btnGuess.setTextColor(Color.RED);
-            animateAndSpeakButtonAnswer();
+            btnGuess.setSelected(true);
+            animAndSpeakButtonAnswer();
             disableButtonGuess();
 
             if (guessValue.equals(answerValue)) {
@@ -266,21 +267,24 @@ public class PlayActivity extends AppCompatActivity implements Constant {
         for (int button = 0; button < grlCase.getChildCount(); button++) {
             Button btnGuess = (Button) grlCase.getChildAt(button);
             btnGuess.setEnabled(true);
-            btnGuess.setTextColor(Color.BLACK);
-            btnGuess.setBackgroundResource(R.drawable.btn_guess);
+            btnGuess.setSelected(false);
+            btnGuess.setTextColor(getResources().getColor(R.color.colorTextPrimary));
+            btnGuess.setBackgroundResource(R.drawable.bg_btn_case_selector);
         }
     }
 
-    private void animateAndSpeakButtonAnswer() {
+    private void animAndSpeakButtonAnswer() {
         for (int button = 0; button < grlCase.getChildCount(); button++) {
             final Button btnGuess = (Button) grlCase.getChildAt(button);
+
             String guess = btnGuess.getText().toString();
             String answer = vocabularies.get(currentVocabulary).english;
 
             if (guess.equals(answer)) {
+                btnGuess.setTextColor(Color.YELLOW);
                 ObjectAnimator anim = ObjectAnimator.ofInt(btnGuess, "backgroundResource",
-                        R.drawable.btn_answer, R.drawable.btn_guess, R.drawable.btn_answer);
-                anim.setDuration(300);
+                        R.drawable.bg_btn_case_pressed, R.drawable.bg_btn_case, R.drawable.bg_btn_case_pressed);
+                anim.setDuration(400);
                 anim.setInterpolator(new LinearInterpolator());
                 anim.setRepeatMode(ValueAnimator.RESTART);
                 anim.setRepeatCount(2);
@@ -306,9 +310,7 @@ public class PlayActivity extends AppCompatActivity implements Constant {
 
                     }
                 });
-
             }
-
         }
     }
 

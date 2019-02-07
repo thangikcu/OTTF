@@ -46,7 +46,11 @@
             android:name=".ui.LearnActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.PlayActivity"
+            android:name=".ui.SelectionModeActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.WordGuessModeActivity"
             android:screenOrientation="portrait" />
 
         <service
@@ -59,7 +63,7 @@
             android:authorities="com.facebook.app.FacebookContentProvider1805614062898528"
             android:exported="true" />
 
-        <activity android:name=".ui.WordGuessModeActivity"></activity>
+
     </application>
 
 </manifest>

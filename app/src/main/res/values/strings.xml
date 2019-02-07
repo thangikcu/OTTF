@@ -27,6 +27,7 @@
     <string name="word_guess_mode">Ghép chữ</string>
     <string name="question_number">Câu số %1$d</string>
     <string name="intro_of_answer">Đáp án của câu hỏi này là</string>
+    <string name="noti_wrong_answer">Câu trả lời của bạn chưa đúng</string>
 
     <string-array name="congratulation_array">
         <item>Chúc mừng</item>

@@ -20,7 +20,7 @@ import vn.poly.hailt.ottf.adapter.DataAdapter;
 import vn.poly.hailt.ottf.adapter.TopicAdapter;
 import vn.poly.hailt.ottf.model.Topic;
 import vn.poly.hailt.ottf.ui.LearnActivity;
-import vn.poly.hailt.ottf.ui.PlayActivity;
+import vn.poly.hailt.ottf.ui.SelectionModeActivity;
 
 public class ChooseTopicFragment extends Fragment {
 
@@ -54,7 +54,7 @@ public class ChooseTopicFragment extends Fragment {
                     intent.putExtra("topic", topics.get(position).name);
                     startActivity(intent);
                 } else {
-                    Intent intent = new Intent(getContext(), PlayActivity.class);
+                    Intent intent = new Intent(getContext(), SelectionModeActivity.class);
                     intent.putExtra("id", topics.get(position).id);
                     intent.putExtra("topic", topics.get(position).name);
                     startActivity(intent);

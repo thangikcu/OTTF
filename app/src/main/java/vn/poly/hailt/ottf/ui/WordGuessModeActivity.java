@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +13,9 @@ import android.util.SparseIntArray;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -44,6 +48,7 @@ public class WordGuessModeActivity extends AppCompatActivity implements Constant
     private FlexboxLayout flbGuessArea;
 
     private Handler handler;
+    private MediaPlayer checkSound;
 
     private List<Vocabulary> vocabularies;
 
@@ -52,6 +57,7 @@ public class WordGuessModeActivity extends AppCompatActivity implements Constant
     private String vocabulary;
     private int index = 0;
     private String guess = "";
+    private int touchCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +65,7 @@ public class WordGuessModeActivity extends AppCompatActivity implements Constant
         setContentView(R.layout.activity_word_guess_mode);
 
         handler = new Handler();
+        checkSound = new MediaPlayer();
         sparseIntArray = new SparseIntArray();
         initData();
         initViews();
@@ -101,8 +108,10 @@ public class WordGuessModeActivity extends AppCompatActivity implements Constant
     }
 
     private void initPlayArea() {
+
         tvHeader.setText(getString(R.string.question_number, index + 1));
         vocabulary = vocabularies.get(index).english;
+        vocabulary = vocabulary.replace(" ", "");
 
         Glide.with(this).load(vocabularies.get(index).imageLink).into(imgThing);
         tvVietnamese.setText(vocabularies.get(index).vietnamese);
@@ -125,27 +134,32 @@ public class WordGuessModeActivity extends AppCompatActivity implements Constant
             @Override
             public void run() {
 
-                int edge = flbAnswerArea.getWidth() / 8 - 8;
-                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(edge, edge);
-                lp.setMargins(4, 4, 4, 4);
+                int edgeOfButtonAnswer = flbAnswerArea.getWidth() / 8 - 8;
+                LinearLayout.LayoutParams lpGuess = new LinearLayout.LayoutParams(edgeOfButtonAnswer, edgeOfButtonAnswer);
+                lpGuess.setMargins(4, 4, 4, 4);
+
+                int edgeOfButtonGuess = flbGuessArea.getWidth() / 8 - 16;
+                LinearLayout.LayoutParams lpAnswer = new LinearLayout.LayoutParams(edgeOfButtonGuess, edgeOfButtonGuess);
+                lpAnswer.setMargins(4, 4, 4, 4);
 
                 for (int i = 0; i < vocabulary.length(); i++) {
                     Button button = new Button(WordGuessModeActivity.this);
 
-                    button.setLayoutParams(lp);
-                    button.setBackgroundResource(R.drawable.btn_guess);
-                    button.setTypeface(Typeface.DEFAULT_BOLD);
+                    button.setLayoutParams(lpAnswer);
+                    button.setBackgroundResource(R.drawable.btn_letter_answer);
                     button.setTextColor(getResources().getColor(R.color.colorPrimary));
+                    button.setTypeface(button.getTypeface(), Typeface.BOLD);
                     flbAnswerArea.addView(button);
                 }
 
                 for (int i = 0; i < 16; i++) {
                     Button button = new Button(WordGuessModeActivity.this);
                     button.setText(lettersList.get(i));
-                    button.setLayoutParams(lp);
+                    button.setLayoutParams(lpGuess);
                     button.setAllCaps(true);
                     button.setTextColor(getResources().getColor(R.color.colorTextPrimary));
-                    button.setBackgroundResource(R.drawable.btn_letter);
+                    button.setBackgroundResource(R.drawable.btn_letter_guess);
+                    button.setTypeface(button.getTypeface(), Typeface.BOLD);
                     flbGuessArea.addView(button);
                 }
 
@@ -171,39 +185,85 @@ public class WordGuessModeActivity extends AppCompatActivity implements Constant
         public void onClick(View v) {
             Button btnGuess = ((Button) v);
 
-            String letter = btnGuess.getText().toString();
+            if (touchCount < vocabulary.length()) {
+                String letter = btnGuess.getText().toString();
 
-            for (int i = 0; i < vocabulary.length(); i++) {
-
-                Button btnAnswer = (Button) flbAnswerArea.getChildAt(i);
-                int indexOfButtonGuess = flbGuessArea.indexOfChild(btnGuess);
-
-                if (btnAnswer.getText().equals("")) {
-                    btnAnswer.setText(letter);
-                    btnGuess.setVisibility(View.INVISIBLE);
-                    sparseIntArray.put(i, indexOfButtonGuess);
-                    break;
-                }
-            }
-
-            Button btnAnswerFinal = (Button) flbAnswerArea.getChildAt(vocabulary.length() - 1);
-
-            if (!btnAnswerFinal.getText().equals("")) {
                 for (int i = 0; i < vocabulary.length(); i++) {
+
                     Button btnAnswer = (Button) flbAnswerArea.getChildAt(i);
-                    String text = btnAnswer.getText().toString();
-                    guess = String.valueOf(new StringBuilder().append(guess).append(text));
+                    int indexOfButtonGuess = flbGuessArea.indexOfChild(btnGuess);
+
+                    if (btnAnswer.getText().equals("")) {
+                        btnAnswer.setText(letter);
+                        btnGuess.setVisibility(View.INVISIBLE);
+                        sparseIntArray.put(i, indexOfButtonGuess);
+                        touchCount += 1;
+                        break;
+                    }
                 }
 
-                if (guess.length() == vocabulary.length()) {
-                    if (guess.equalsIgnoreCase(vocabulary)) {
-                        showAnswerDialog();
-                    } else {
-                        for (int i = 0; i < vocabulary.length(); i++) {
-                            Button btnAnswer = (Button) flbAnswerArea.getChildAt(i);
-                            btnAnswer.setTextColor(Color.RED);
+                Button btnAnswerFinal = (Button) flbAnswerArea.getChildAt(vocabulary.length() - 1);
+
+                if (!btnAnswerFinal.getText().equals("")) {
+                    for (int i = 0; i < vocabulary.length(); i++) {
+                        Button btnAnswer = (Button) flbAnswerArea.getChildAt(i);
+                        String text = btnAnswer.getText().toString();
+                        guess = String.valueOf(new StringBuilder().append(guess).append(text));
+                    }
+
+                    if (touchCount == vocabulary.length()) {
+                        if (guess.equalsIgnoreCase(vocabulary)) {
+                            soundEffect(R.raw.correct_sound);
+                            animTeeter().setAnimationListener(new Animation.AnimationListener() {
+                                @Override
+                                public void onAnimationStart(Animation animation) {
+                                    flbGuessArea.setVisibility(View.INVISIBLE);
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animation animation) {
+                                    handler.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            showAnswerDialog();
+                                        }
+                                    }, 200);
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animation animation) {
+
+                                }
+                            });
+
+                        } else {
+                            for (int i = 0; i < vocabulary.length(); i++) {
+                                Button btnAnswer = (Button) flbAnswerArea.getChildAt(i);
+                                btnAnswer.setTextColor(Color.RED);
+                            }
+                            soundEffect(R.raw.incorrect_sound);
+                            animTeeter().setAnimationListener(new Animation.AnimationListener() {
+                                @Override
+                                public void onAnimationStart(Animation animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animation animation) {
+                                    for (int i = 0; i < vocabulary.length(); i++) {
+                                        Button btnAnswer = (Button) flbAnswerArea.getChildAt(i);
+                                        btnAnswer.setTextColor(getResources().getColor(R.color.colorPrimary));
+                                    }
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animation animation) {
+
+                                }
+                            });
+                            Toast.makeText(WordGuessModeActivity.this,
+                                    getString(R.string.noti_wrong_answer), Toast.LENGTH_SHORT).show();
                         }
-                        Toast.makeText(WordGuessModeActivity.this, "Câu trả lời của bạn chưa đúng", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -219,6 +279,8 @@ public class WordGuessModeActivity extends AppCompatActivity implements Constant
 
             if (!btnAnswer.getText().equals("")) {
                 guess = "";
+                touchCount -= 1;
+
                 btnAnswer.setText("");
                 btnAnswer.setTextColor(getResources().getColor(R.color.colorPrimary));
 
@@ -239,24 +301,25 @@ public class WordGuessModeActivity extends AppCompatActivity implements Constant
         final Button btnNext = dlgShowAnswer.findViewById(R.id.btnNext);
 
         tvCongratulation.setText(generateCongratulation());
-        tvAnswer.setText(vocabulary);
+        tvAnswer.setText(vocabularies.get(index).english);
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 btnNext.setVisibility(View.VISIBLE);
             }
-        }, 1200);
+        }, 1500);
         index += 1;
+        touchCount = 0;
         guess = "";
 
         flbAnswerArea.removeAllViews();
         flbGuessArea.removeAllViews();
 
-
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dlgShowAnswer.dismiss();
+                flbGuessArea.setVisibility(View.VISIBLE);
                 initPlayArea();
             }
         });
@@ -266,6 +329,7 @@ public class WordGuessModeActivity extends AppCompatActivity implements Constant
             public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
                     dlgShowAnswer.dismiss();
+                    flbGuessArea.setVisibility(View.VISIBLE);
                     initPlayArea();
                 }
                 return true;
@@ -280,40 +344,29 @@ public class WordGuessModeActivity extends AppCompatActivity implements Constant
         return arrCon[new Random().nextInt(arrCon.length)];
     }
 
-//    private void nextVocabulary(List<View> views) {
-//        for (int i = 0; i < views.size(); i++) {
-//            ObjectAnimator objAnimFadeOut = ObjectAnimator.ofFloat(views.get(i), "alpha", 1f, 0f);
-//            objAnimFadeOut.setDuration(400);
-//            ObjectAnimator objAnimFadeIn = ObjectAnimator.ofFloat(views.get(i), "alpha", 0f, 1f);
-//            objAnimFadeIn.setDuration(400);
-//            AnimatorSet anim = new AnimatorSet();
-//            anim.play(objAnimFadeOut).before(objAnimFadeIn);
-//            anim.start();
-//
-//            objAnimFadeOut.addListener(new Animator.AnimatorListener() {
-//                @Override
-//                public void onAnimationStart(Animator animation) {
-//
-//                }
-//
-//                @Override
-//                public void onAnimationEnd(Animator animation) {
-//
-//                }
-//
-//                @Override
-//                public void onAnimationCancel(Animator animation) {
-//
-//                }
-//
-//                @Override
-//                public void onAnimationRepeat(Animator animation) {
-//
-//                }
-//            });
-//        }
-//
-//    }
+    private void soundEffect(int sound) {
+        checkSound.reset();
+        checkSound = MediaPlayer.create(getApplicationContext(), sound);
+        checkSound.start();
+    }
+
+    private RotateAnimation animTeeter() {
+
+        RotateAnimation rotate = new RotateAnimation(10, -10, Animation.RELATIVE_TO_SELF,
+                0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        rotate.setDuration(200);
+        rotate.setInterpolator(new LinearInterpolator());
+        rotate.setRepeatMode(Animation.REVERSE);
+        rotate.setRepeatCount(2);
+
+        for (int child = 0; child < flbAnswerArea.getChildCount(); child++) {
+
+            Button btnGuess = (Button) flbAnswerArea.getChildAt(child);
+            btnGuess.startAnimation(rotate);
+
+        }
+        return rotate;
+    }
 
     @Override
     protected void onStop() {
