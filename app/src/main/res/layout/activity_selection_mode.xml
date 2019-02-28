@@ -51,26 +51,7 @@
         android:layout_below="@id/tvScore"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
-        android:background="@drawable/bg_main_image">
-
-        <ImageView
-            android:id="@+id/imgThing"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:contentDescription="@string/img_thing"
-            android:padding="16dp" />
-
-    </FrameLayout>
-
-    <TextView
-        android:id="@+id/tvVietnamese"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/containerMainImage"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="8dp"
-        android:textColor="@color/colorTextPrimary"
-        android:textSize="24sp" />
+        android:background="@drawable/bg_main_image"/>
 
     <GridLayout
         android:id="@+id/grlCase"

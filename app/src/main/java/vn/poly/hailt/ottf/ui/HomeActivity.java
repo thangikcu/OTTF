@@ -7,8 +7,10 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -18,6 +20,8 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
+import java.util.Objects;
 
 import vn.poly.hailt.ottf.R;
 import vn.poly.hailt.ottf.common.Constant;
@@ -58,13 +62,14 @@ public class HomeActivity extends AppCompatActivity implements Constant {
                 showChooseTopicFragment();
 
                 Bundle bundle = new Bundle();
-                bundle.putInt("keyAct", 0);
+                bundle.putInt("keyAct", FROM_ACTION_LEARN);
 
                 fragChooseTopic.setArguments(bundle);
             }
         });
 
         btnPlay.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View v) {
                 showChooseModeDialog();
@@ -72,6 +77,7 @@ public class HomeActivity extends AppCompatActivity implements Constant {
         });
 
         btnInformation.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View v) {
                 showInformationDialog();
@@ -102,13 +108,13 @@ public class HomeActivity extends AppCompatActivity implements Constant {
         else tgbSound.setChecked(true);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void showInformationDialog() {
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_information);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-
 
         String versionName = "";
         try {
@@ -146,12 +152,15 @@ public class HomeActivity extends AppCompatActivity implements Constant {
         ft.commit();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void showChooseModeDialog() {
         final Dialog dlgChooseMode = new Dialog(this);
         dlgChooseMode.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dlgChooseMode.setContentView(R.layout.dialog_choose_mode);
-        dlgChooseMode.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        Objects.requireNonNull(dlgChooseMode.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dlgChooseMode.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+
 
         Button btnSelectionMode = dlgChooseMode.findViewById(R.id.btnSelectionMode);
         Button btnWordGuessMode = dlgChooseMode.findViewById(R.id.btnWordGuessMode);
@@ -161,7 +170,7 @@ public class HomeActivity extends AppCompatActivity implements Constant {
             public void onClick(View v) {
                 showChooseTopicFragment();
                 Bundle bundle = new Bundle();
-                bundle.putInt("keyAct", 1);
+                bundle.putInt("keyAct", FROM_SELECTION_MODE);
 
                 fragChooseTopic.setArguments(bundle);
                 dlgChooseMode.dismiss();
@@ -171,8 +180,11 @@ public class HomeActivity extends AppCompatActivity implements Constant {
         btnWordGuessMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(HomeActivity.this, WordGuessModeActivity.class));
-                overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+                showChooseTopicFragment();
+                Bundle bundle = new Bundle();
+                bundle.putInt("keyAct", FROM_WORD_GUESS_MODE);
+
+                fragChooseTopic.setArguments(bundle);
                 dlgChooseMode.dismiss();
             }
         });
@@ -186,7 +198,7 @@ public class HomeActivity extends AppCompatActivity implements Constant {
         if (!fragChooseTopic.isHidden() && fragChooseTopic.isAdded()) {
             ft
                     .setCustomAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
-                    .hide(fragChooseTopic)
+                    .remove(fragChooseTopic)
                     .commit();
 
         } else {

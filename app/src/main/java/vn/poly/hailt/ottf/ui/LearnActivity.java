@@ -4,60 +4,51 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.os.Bundle;
-import android.speech.tts.TextToSpeech;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.bumptech.glide.Glide;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 import vn.poly.hailt.ottf.R;
 import vn.poly.hailt.ottf.adapter.DataAdapter;
 import vn.poly.hailt.ottf.adapter.ImageAdapter;
+import vn.poly.hailt.ottf.common.BaseActivity;
 import vn.poly.hailt.ottf.model.Vocabulary;
 
-public class LearnActivity extends AppCompatActivity {
+public class LearnActivity extends BaseActivity {
 
     private ImageView imgBack;
 
+    private LinearLayout containerMainImage;
     private TextView tvEnglish;
-    private FrameLayout containerMainImage;
-    private ImageView imgThing;
+    private TextView tvTranscription;
     private TextView tvVietnamese;
     private RecyclerView lvImage;
 
     private List<Vocabulary> vocabularies;
 
-    private TextToSpeech tts;
 
     private int index = 0;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_learn);
+    protected int getLayoutID() {
+        return R.layout.activity_learn;
+    }
 
+    @Override
+    protected void onCreateActivity(Bundle savedInstanceState) {
         initViews();
-        initTTS();
+        initTextToSpeech();
         initActions();
         initData();
         if (vocabularies.size() > 0)
             loadVocabulary(vocabularies.get(0));
         initRecyclerView();
-    }
-
-    private void speakVocabulary() {
-        String toSpeak = vocabularies.get(index).english;
-        tts.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
     }
 
     private void animateAndSpeakVocabulary(List<View> views, final Vocabulary vocabulary) {
@@ -79,7 +70,7 @@ public class LearnActivity extends AppCompatActivity {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     loadVocabulary(vocabulary);
-                    speakVocabulary();
+                    speakText(vocabulary.english);
                 }
 
                 @Override
@@ -99,8 +90,11 @@ public class LearnActivity extends AppCompatActivity {
     private void loadVocabulary(Vocabulary vocabulary) {
         if (vocabularies != null) {
             tvEnglish.setText(vocabulary.english);
-            Glide.with(this).load(vocabulary.imageLink).into(imgThing);
+            tvEnglish.setTextColor(randomColor());
+            tvTranscription.setText(vocabulary.transcription);
+            tvTranscription.setTextColor(randomColor());
             tvVietnamese.setText(vocabulary.vietnamese);
+            tvVietnamese.setTextColor(randomColor());
         }
     }
 
@@ -115,19 +109,8 @@ public class LearnActivity extends AppCompatActivity {
             public void onItemClick(View itemView, int position) {
                 index = position;
                 Vocabulary vocabulary = vocabularies.get(position);
-                List<View> views = Arrays.asList(tvEnglish, containerMainImage, imgThing, tvVietnamese);
+                List<View> views = Arrays.asList(tvEnglish, containerMainImage, tvTranscription, tvVietnamese);
                 animateAndSpeakVocabulary(views, vocabulary);
-            }
-        });
-    }
-
-    private void initTTS() {
-        tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status != TextToSpeech.ERROR) {
-                    tts.setLanguage(Locale.UK);
-                }
             }
         });
     }
@@ -152,7 +135,7 @@ public class LearnActivity extends AppCompatActivity {
         containerMainImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                speakVocabulary();
+                speakText(vocabularies.get(index).english);
             }
         });
     }
@@ -163,25 +146,12 @@ public class LearnActivity extends AppCompatActivity {
         TextView tvHeader = iclHeader.findViewById(R.id.tvHeader);
         tvHeader.setText(getIntent().getStringExtra("topic"));
 
-        tvEnglish = findViewById(R.id.tvEnglish);
+
         containerMainImage = findViewById(R.id.containerMainImage);
-        imgThing = findViewById(R.id.imgThing);
+        tvEnglish = findViewById(R.id.tvEnglish);
+        tvTranscription = findViewById(R.id.tvTranscription);
         tvVietnamese = findViewById(R.id.tvVietnamese);
         lvImage = findViewById(R.id.lvImage);
     }
 
-    @Override
-    protected void onDestroy() {
-        if (tts != null) {
-            tts.stop();
-            tts.shutdown();
-        }
-        super.onDestroy();
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
-    }
 }

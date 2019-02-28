@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="92dp"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="100dp"
     android:layout_height="match_parent"
     android:layout_marginEnd="8dp"
     android:layout_marginRight="8dp"
-    app:cardCornerRadius="10dp">
+    android:background="@drawable/bg_extra_image">
 
-    <ImageView
-        android:id="@+id/imgThing"
+    <TextView
+        android:id="@+id/tvEnglish"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+        android:layout_gravity="center"
         android:contentDescription="@string/img_thing"
+        android:gravity="center"
         android:padding="8dp" />
 
-</android.support.v7.widget.CardView>
+</FrameLayout>

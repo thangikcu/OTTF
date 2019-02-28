@@ -9,8 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-
 import java.util.List;
 
 import vn.poly.hailt.ottf.R;
@@ -21,6 +19,21 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicHolder>
     private final Context context;
     private final List<Topic> topics;
     private OnItemClickListener listener;
+    private int[] imgTopicID = {
+            R.drawable.tp_all,
+            R.drawable.tp_numbers,
+            R.drawable.tp_family,
+            R.drawable.tp_house,
+            R.drawable.tp_costumes,
+            R.drawable.tp_fruits,
+            R.drawable.tp_vegetables,
+            R.drawable.tp_occupations,
+            R.drawable.tp_animals,
+            R.drawable.tp_traffic,
+            R.drawable.tp_sports,
+            R.drawable.tp_sports
+    };
+    private boolean isAllImage;
 
     public interface OnItemClickListener {
         void onItemClick(View itemView, int position);
@@ -30,9 +43,10 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicHolder>
         this.listener = listener;
     }
 
-    public TopicAdapter(Context context, List<Topic> topics) {
+    public TopicAdapter(Context context, List<Topic> topics, boolean isAllImage) {
         this.context = context;
         this.topics = topics;
+        this.isAllImage = isAllImage;
     }
 
     @NonNull
@@ -45,7 +59,11 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicHolder>
     @Override
     public void onBindViewHolder(@NonNull TopicHolder holder, int position) {
         Topic topic = topics.get(position);
-        Glide.with(context).load(topic.imageLink).into(holder.imgTopic);
+        if (isAllImage) {
+            holder.imgTopic.setImageResource(imgTopicID[position]);
+        } else {
+            holder.imgTopic.setImageResource(imgTopicID[position+1]);
+        }
         holder.tvTopic.setText(topic.name);
     }
 

@@ -40,14 +40,6 @@
         android:textColor="@color/colorTextPrimary"
         android:textSize="18sp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="@string/copyright"
-        android:textColor="@color/colorTextPrimary"
-        android:textSize="18sp" />
-
     <Button
         android:id="@+id/btnClose"
         android:layout_width="match_parent"

@@ -11,17 +11,21 @@ import vn.poly.hailt.ottf.R;
 
 public class SplashScreenActivity extends AppCompatActivity {
 
+    private Handler handler;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
+
+        handler = new Handler();
 
         ImageView imgSpeech = findViewById(R.id.imgSpeech);
         ObjectAnimator animator = ObjectAnimator.ofFloat(imgSpeech, "alpha", 0f, 1f);
         animator.setDuration(1500);
         animator.start();
 
-        new Handler().postDelayed(new Runnable() {
+        handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 startActivity(new Intent(getApplicationContext(), HomeActivity.class));
@@ -36,5 +40,11 @@ public class SplashScreenActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        handler.removeCallbacksAndMessages(null);
+        finish();
+    }
 }
 

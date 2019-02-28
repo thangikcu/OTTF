@@ -12,14 +12,13 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.speech.tts.TextToSpeech;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.RequiresApi;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -27,7 +26,6 @@ import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.model.SharePhoto;
 import com.facebook.share.model.SharePhotoContent;
@@ -36,22 +34,20 @@ import com.facebook.share.widget.ShareDialog;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
+import java.util.Objects;
 
-import vn.poly.hailt.ottf.common.Constant;
 import vn.poly.hailt.ottf.R;
 import vn.poly.hailt.ottf.adapter.DataAdapter;
+import vn.poly.hailt.ottf.common.BaseActivity;
+import vn.poly.hailt.ottf.common.Constant;
 import vn.poly.hailt.ottf.model.Vocabulary;
 
-public class SelectionModeActivity extends AppCompatActivity implements Constant {
+public class SelectionModeActivity extends BaseActivity implements Constant {
 
     private ImageView imgBack;
-
     private TextView tvHeart;
     private TextView tvScore;
     private FrameLayout containerMainImage;
-    private ImageView imgThing;
-    private TextView tvVietnamese;
     private Button btnCaseA;
     private Button btnCaseB;
     private Button btnCaseC;
@@ -59,7 +55,6 @@ public class SelectionModeActivity extends AppCompatActivity implements Constant
     private GridLayout grlCase;
 
     private Handler handler;
-    private TextToSpeech tts;
     private MediaPlayer checkSound;
 
     private List<Vocabulary> vocabularies;
@@ -72,34 +67,32 @@ public class SelectionModeActivity extends AppCompatActivity implements Constant
     private ShareDialog shareDialog;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_selection_mode);
+    protected int getLayoutID() {
+        return R.layout.activity_selection_mode;
+    }
 
+    @Override
+    protected void onCreateActivity(Bundle savedInstanceState) {
         handler = new Handler();
         checkSound = new MediaPlayer();
 
         initData();
         initViews();
-        initTTS();
+        initTextToSpeech();
         initActions();
         initVocabulary();
-
-        for (int button = 0; button < grlCase.getChildCount(); button++) {
-
-            Button btnGuess = (Button) grlCase.getChildAt(button);
-            btnGuess.setAllCaps(false);
-            btnGuess.setTextColor(getResources().getColor(R.color.colorTextPrimary));
-            btnGuess.setTextSize(16);
-            btnGuess.setOnClickListener(btnGuessListener);
-        }
     }
 
     private void initData() {
+        int idTopic = getIntent().getIntExtra("id", 1);
         DataAdapter dataAdapter = new DataAdapter(this);
         dataAdapter.createDatabase();
         dataAdapter.open();
-        vocabularies = dataAdapter.getVocabularies(getIntent().getIntExtra("id", 1));
+        if (idTopic != 0) {
+            vocabularies = dataAdapter.getVocabularies(idTopic);
+        } else {
+            vocabularies = dataAdapter.getAllVocabularies();
+        }
         dataAdapter.close();
         Collections.shuffle(vocabularies);
     }
@@ -113,8 +106,6 @@ public class SelectionModeActivity extends AppCompatActivity implements Constant
         tvHeart = findViewById(R.id.tvHeart);
         tvScore = findViewById(R.id.tvScore);
         containerMainImage = findViewById(R.id.containerMainImage);
-        imgThing = findViewById(R.id.imgThing);
-        tvVietnamese = findViewById(R.id.tvVietnamese);
         btnCaseA = findViewById(R.id.btnCaseA);
         btnCaseB = findViewById(R.id.btnCaseB);
         btnCaseC = findViewById(R.id.btnCaseC);
@@ -133,25 +124,26 @@ public class SelectionModeActivity extends AppCompatActivity implements Constant
             String answerValue = vocabularies.get(currentVocabulary).english;
             btnGuess.setSelected(true);
             animAndSpeakButtonAnswer();
-            disableButtonGuess();
+            disableGuessButton();
 
             if (guessValue.equals(answerValue)) {
 
-                soundEffect(R.raw.correct_sound);
+                playSoundEffect(checkSound, R.raw.correct_sound);
                 ++score;
-                changeScore();
+                changeScore(tvScore, score);
 
             } else {
 
-                soundEffect(R.raw.incorrect_sound);
+                playSoundEffect(checkSound, R.raw.incorrect_sound);
                 --heart;
-                changeHeart();
+                changeHeart(tvHeart, heart);
 
                 if (heart == 0) {
                     if (score > restoreHighScore()) {
                         saveHighScore(score);
                     }
                     handler.postDelayed(new Runnable() {
+                        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                         @Override
                         public void run() {
                             showGameOverDialog(getString(R.string.game_over));
@@ -166,6 +158,7 @@ public class SelectionModeActivity extends AppCompatActivity implements Constant
                     saveHighScore(score);
                 }
                 handler.postDelayed(new Runnable() {
+                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                     @Override
                     public void run() {
                         showGameOverDialog(getString(R.string.victory));
@@ -176,7 +169,7 @@ public class SelectionModeActivity extends AppCompatActivity implements Constant
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        List<View> views = Arrays.asList(containerMainImage, imgThing, tvVietnamese, grlCase);
+                        List<ViewGroup> views = Arrays.asList(containerMainImage, grlCase);
                         nextVocabulary(views);
                     }
                 }, 1800);
@@ -194,33 +187,51 @@ public class SelectionModeActivity extends AppCompatActivity implements Constant
             }
         });
 
-    }
+        for (int button = 0; button < grlCase.getChildCount(); button++) {
 
-    private void initTTS() {
-        tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status != TextToSpeech.ERROR) {
-                    tts.setLanguage(Locale.UK);
-                }
-            }
-        });
+            Button btnGuess = (Button) grlCase.getChildAt(button);
+            btnGuess.setAllCaps(false);
+            btnGuess.setTextColor(getResources().getColor(R.color.colorTextPrimary));
+            btnGuess.setTextSize(TEXT_DEFAULT_SIZE);
+            btnGuess.setOnClickListener(btnGuessListener);
+        }
     }
 
     private void initVocabulary() {
         if (vocabularies.size() > 0) {
             Vocabulary vocabulary = vocabularies.get(currentVocabulary);
 
-            Glide.with(this).load(vocabulary.imageLink).into(imgThing);
-            tvVietnamese.setText(vocabulary.vietnamese);
-            btnCaseA.setText(vocabulary.caseA);
-            btnCaseB.setText(vocabulary.caseB);
-            btnCaseC.setText(vocabulary.caseC);
-            btnCaseD.setText(vocabulary.caseD);
+            tvEnglishInMainImage(containerMainImage, vocabulary.vietnamese);
+
+            String caseA = vocabulary.caseA;
+            String caseB = vocabulary.caseB;
+            String caseC = vocabulary.caseC;
+            String caseD = vocabulary.caseD;
+
+            if (caseA.length() > MAX_NUMBER_LETTER_BUTTON) {
+                btnCaseA.setTextSize(TEXT_SMALL_SIZE);
+            } else if (caseB.length() > MAX_NUMBER_LETTER_BUTTON) {
+                btnCaseB.setTextSize(TEXT_SMALL_SIZE);
+            } else if (caseC.length() > MAX_NUMBER_LETTER_BUTTON) {
+                btnCaseC.setTextSize(TEXT_SMALL_SIZE);
+            } else if (caseD.length() > MAX_NUMBER_LETTER_BUTTON) {
+                btnCaseD.setTextSize(TEXT_SMALL_SIZE);
+            } else {
+                for (int button = 0; button < grlCase.getChildCount(); button++) {
+                    Button btnGuess = (Button) grlCase.getChildAt(button);
+                    btnGuess.setTextSize(TEXT_DEFAULT_SIZE);
+                }
+            }
+
+            btnCaseA.setText(caseA);
+            btnCaseB.setText(caseB);
+            btnCaseC.setText(caseC);
+            btnCaseD.setText(caseD);
+
         }
     }
 
-    private void nextVocabulary(List<View> views) {
+    private void nextVocabulary(List<ViewGroup> views) {
         for (int i = 0; i < views.size(); i++) {
             ObjectAnimator objAnimFadeOut = ObjectAnimator.ofFloat(views.get(i), "alpha", 1f, 0f);
             objAnimFadeOut.setDuration(400);
@@ -238,8 +249,9 @@ public class SelectionModeActivity extends AppCompatActivity implements Constant
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
+                    containerMainImage.removeAllViews();
                     initVocabulary();
-                    enableButtonGuess();
+                    enableGuessButton();
                 }
 
                 @Override
@@ -256,14 +268,14 @@ public class SelectionModeActivity extends AppCompatActivity implements Constant
 
     }
 
-    private void disableButtonGuess() {
+    private void disableGuessButton() {
         for (int button = 0; button < grlCase.getChildCount(); button++) {
             Button btnGuess = (Button) grlCase.getChildAt(button);
             btnGuess.setEnabled(false);
         }
     }
 
-    private void enableButtonGuess() {
+    private void enableGuessButton() {
         for (int button = 0; button < grlCase.getChildCount(); button++) {
             Button btnGuess = (Button) grlCase.getChildAt(button);
             btnGuess.setEnabled(true);
@@ -278,7 +290,7 @@ public class SelectionModeActivity extends AppCompatActivity implements Constant
             final Button btnGuess = (Button) grlCase.getChildAt(button);
 
             String guess = btnGuess.getText().toString();
-            String answer = vocabularies.get(currentVocabulary).english;
+            final String answer = vocabularies.get(currentVocabulary).english;
 
             if (guess.equals(answer)) {
                 btnGuess.setTextColor(Color.YELLOW);
@@ -297,7 +309,7 @@ public class SelectionModeActivity extends AppCompatActivity implements Constant
 
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        tts.speak(btnGuess.getText().toString(), TextToSpeech.QUEUE_FLUSH, null);
+                        speakText(answer);
                     }
 
                     @Override
@@ -314,31 +326,14 @@ public class SelectionModeActivity extends AppCompatActivity implements Constant
         }
     }
 
-    private void changeHeart() {
-        Animation zoom = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in_and_out);
-        tvHeart.startAnimation(zoom);
-        tvHeart.setText(String.valueOf(heart));
-    }
-
-    private void changeScore() {
-        Animation zoom = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in_and_out);
-        tvScore.startAnimation(zoom);
-        tvScore.setText(String.valueOf(score));
-    }
-
-    private void soundEffect(int sound) {
-        checkSound.reset();
-        checkSound = MediaPlayer.create(getApplicationContext(), sound);
-        checkSound.start();
-    }
-
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void showGameOverDialog(String title) {
         dlgGameOver = new Dialog(this);
         dlgGameOver.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dlgGameOver.setContentView(R.layout.dialog_game_over);
         dlgGameOver.setCancelable(false);
         dlgGameOver.setCanceledOnTouchOutside(false);
-        dlgGameOver.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        Objects.requireNonNull(dlgGameOver.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dlgGameOver.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
 
         TextView tvTitle = dlgGameOver.findViewById(R.id.tvTitle);
@@ -360,9 +355,10 @@ public class SelectionModeActivity extends AppCompatActivity implements Constant
                 tvScore.setText(String.valueOf(score));
                 heart = 4;
                 tvHeart.setText(String.valueOf(heart));
+                containerMainImage.removeAllViews();
                 Collections.shuffle(vocabularies);
                 initVocabulary();
-                enableButtonGuess();
+                enableGuessButton();
                 dlgGameOver.dismiss();
             }
         });
@@ -392,15 +388,15 @@ public class SelectionModeActivity extends AppCompatActivity implements Constant
     }
 
     private void saveHighScore(int highScore) {
-        SharedPreferences pref = getSharedPreferences(PREF_HIGH_SCORE, MODE_PRIVATE);
+        SharedPreferences pref = getSharedPreferences(PREF_H_SCORE_SELECTION_MODE, MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
-        editor.putInt(HIGH_SCORE, highScore);
+        editor.putInt(H_SCORE_SELECTION_MODE, highScore);
         editor.apply();
     }
 
     private int restoreHighScore() {
-        return getSharedPreferences(PREF_HIGH_SCORE, MODE_PRIVATE)
-                .getInt(HIGH_SCORE, 0);
+        return getSharedPreferences(PREF_H_SCORE_SELECTION_MODE, MODE_PRIVATE)
+                .getInt(H_SCORE_SELECTION_MODE, 0);
     }
 
     private Bitmap rootView() {
@@ -411,8 +407,9 @@ public class SelectionModeActivity extends AppCompatActivity implements Constant
         return bitmap;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private Bitmap dialogView() {
-        View v = dlgGameOver.getWindow().getDecorView().getRootView();
+        View v = Objects.requireNonNull(dlgGameOver.getWindow()).getDecorView().getRootView();
         v.setDrawingCacheEnabled(true);
         Bitmap bitmap = Bitmap.createBitmap(v.getDrawingCache());
         v.setDrawingCacheEnabled(false);
@@ -424,12 +421,13 @@ public class SelectionModeActivity extends AppCompatActivity implements Constant
         Canvas canvas = new Canvas(bmOverlay);
         canvas.drawBitmap(bmp1, new Matrix(), null);
         canvas.drawARGB(100, 0, 0, 0);
-        float centerX = (canvas.getWidth() - bmp2.getWidth()) / 2;
-        float centerY = (canvas.getHeight() - bmp2.getHeight()) / 2;
+        int centerX = (canvas.getWidth() - bmp2.getWidth()) / 2;
+        int centerY = (canvas.getHeight() - bmp2.getHeight()) / 2;
         canvas.drawBitmap(bmp2, centerX, centerY, null);
         return bmOverlay;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void shareScreenshot() {
         if (ShareDialog.canShow(ShareLinkContent.class)) {
 
@@ -441,19 +439,6 @@ public class SelectionModeActivity extends AppCompatActivity implements Constant
                     .build();
             shareDialog.show(content);
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        tts.stop();
-        tts.shutdown();
-        super.onDestroy();
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
     }
 
 }

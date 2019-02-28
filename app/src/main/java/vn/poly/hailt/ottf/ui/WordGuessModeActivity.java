@@ -6,9 +6,10 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.RequiresApi;
 import android.util.SparseIntArray;
 import android.view.KeyEvent;
 import android.view.View;
@@ -17,32 +18,34 @@ import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.google.android.flexbox.FlexboxLayout;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 import vn.poly.hailt.ottf.R;
 import vn.poly.hailt.ottf.adapter.DataAdapter;
+import vn.poly.hailt.ottf.common.BaseActivity;
 import vn.poly.hailt.ottf.common.Constant;
 import vn.poly.hailt.ottf.model.Vocabulary;
 
-public class WordGuessModeActivity extends AppCompatActivity implements Constant {
+public class WordGuessModeActivity extends BaseActivity implements Constant {
 
     private ImageView imgBack;
-    private TextView tvHeader;
 
-    private ImageView imgThing;
-    private TextView tvVietnamese;
+    private TextView tvHeart;
+    private TextView tvScore;
+    private FrameLayout containerMainImage;
 
     private FlexboxLayout flbAnswerArea;
     private FlexboxLayout flbGuessArea;
@@ -55,23 +58,26 @@ public class WordGuessModeActivity extends AppCompatActivity implements Constant
     private SparseIntArray sparseIntArray;
 
     private String vocabulary;
-    private int index = 0;
+    private int currentVocabulary = 0;
     private String guess = "";
     private int touchCount = 0;
+    private int score = 0;
+    private int heart = 1;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_word_guess_mode);
+    protected int getLayoutID() {
+        return R.layout.activity_word_guess_mode;
+    }
 
+    @Override
+    protected void onCreateActivity(Bundle savedInstanceState) {
         handler = new Handler();
         checkSound = new MediaPlayer();
         sparseIntArray = new SparseIntArray();
         initData();
         initViews();
+        initTextToSpeech();
         initActions();
-
-        index = getSharedPreferences(PREF_QUESTION_NUMBER, MODE_PRIVATE).getInt(QUESTION_NUMBER, 0);
 
         initPlayArea();
     }
@@ -79,10 +85,13 @@ public class WordGuessModeActivity extends AppCompatActivity implements Constant
     private void initViews() {
         View iclHeader = findViewById(R.id.iclHeader);
         imgBack = iclHeader.findViewById(R.id.imgBack);
-        tvHeader = iclHeader.findViewById(R.id.tvHeader);
+        TextView tvHeader = iclHeader.findViewById(R.id.tvHeader);
+        tvHeader.setText(getIntent().getStringExtra("topic"));
 
-        imgThing = findViewById(R.id.imgThing);
-        tvVietnamese = findViewById(R.id.tvVietnamese);
+        tvHeart = findViewById(R.id.tvHeart);
+        tvScore = findViewById(R.id.tvScore);
+
+        containerMainImage = findViewById(R.id.containerMainImage);
 
         flbAnswerArea = findViewById(R.id.flbAnswerArea);
         flbGuessArea = findViewById(R.id.flbGuessArea);
@@ -100,21 +109,25 @@ public class WordGuessModeActivity extends AppCompatActivity implements Constant
     }
 
     private void initData() {
+        int idTopic = getIntent().getIntExtra("id", 1);
         DataAdapter dataAdapter = new DataAdapter(this);
         dataAdapter.createDatabase();
         dataAdapter.open();
-        vocabularies = dataAdapter.getAllVocabularies();
+        if (idTopic != 0) {
+            vocabularies = dataAdapter.getVocabularies(idTopic);
+        } else {
+            vocabularies = dataAdapter.getAllVocabularies();
+        }
         dataAdapter.close();
+        Collections.shuffle(vocabularies);
     }
 
     private void initPlayArea() {
 
-        tvHeader.setText(getString(R.string.question_number, index + 1));
-        vocabulary = vocabularies.get(index).english;
+        vocabulary = vocabularies.get(currentVocabulary).english;
         vocabulary = vocabulary.replace(" ", "");
 
-        Glide.with(this).load(vocabularies.get(index).imageLink).into(imgThing);
-        tvVietnamese.setText(vocabularies.get(index).vietnamese);
+        tvEnglishInMainImage(containerMainImage, vocabularies.get(currentVocabulary).vietnamese);
 
         String[] letters = vocabulary.split("");
         final List<String> lettersList = new LinkedList<>(Arrays.asList(letters));
@@ -146,9 +159,11 @@ public class WordGuessModeActivity extends AppCompatActivity implements Constant
                     Button button = new Button(WordGuessModeActivity.this);
 
                     button.setLayoutParams(lpAnswer);
+                    button.setAllCaps(true);
                     button.setBackgroundResource(R.drawable.btn_letter_answer);
                     button.setTextColor(getResources().getColor(R.color.colorPrimary));
                     button.setTypeface(button.getTypeface(), Typeface.BOLD);
+                    button.setPadding(0, 0, 0, 0);
                     flbAnswerArea.addView(button);
                 }
 
@@ -160,6 +175,7 @@ public class WordGuessModeActivity extends AppCompatActivity implements Constant
                     button.setTextColor(getResources().getColor(R.color.colorTextPrimary));
                     button.setBackgroundResource(R.drawable.btn_letter_guess);
                     button.setTypeface(button.getTypeface(), Typeface.BOLD);
+                    button.setPadding(0, 0, 0, 0);
                     flbGuessArea.addView(button);
                 }
 
@@ -213,21 +229,40 @@ public class WordGuessModeActivity extends AppCompatActivity implements Constant
 
                     if (touchCount == vocabulary.length()) {
                         if (guess.equalsIgnoreCase(vocabulary)) {
-                            soundEffect(R.raw.correct_sound);
+                            playSoundEffect(checkSound, R.raw.correct_sound);
+                            score++;
+                            changeScore(tvScore, score);
+
                             animTeeter().setAnimationListener(new Animation.AnimationListener() {
                                 @Override
                                 public void onAnimationStart(Animation animation) {
                                     flbGuessArea.setVisibility(View.INVISIBLE);
+                                    disableAnswerButton();
                                 }
 
                                 @Override
                                 public void onAnimationEnd(Animation animation) {
-                                    handler.postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            showAnswerDialog();
+                                    speakText(vocabularies.get(currentVocabulary).english);
+                                    if (currentVocabulary == vocabularies.size() - 1) {
+                                        if (score > restoreHighScore()) {
+                                            saveHighScore(score);
                                         }
-                                    }, 200);
+                                        handler.postDelayed(new Runnable() {
+                                            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                                            @Override
+                                            public void run() {
+                                                showAnswerDialog(getString(R.string.victory));
+                                            }
+                                        }, 200);
+                                    } else {
+                                        handler.postDelayed(new Runnable() {
+                                            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                                            @Override
+                                            public void run() {
+                                                showAnswerDialog(generateCongratulation());
+                                            }
+                                        }, 200);
+                                    }
                                 }
 
                                 @Override
@@ -241,18 +276,32 @@ public class WordGuessModeActivity extends AppCompatActivity implements Constant
                                 Button btnAnswer = (Button) flbAnswerArea.getChildAt(i);
                                 btnAnswer.setTextColor(Color.RED);
                             }
-                            soundEffect(R.raw.incorrect_sound);
+                            playSoundEffect(checkSound, R.raw.incorrect_sound);
+                            heart--;
+                            changeHeart(tvHeart, heart);
                             animTeeter().setAnimationListener(new Animation.AnimationListener() {
                                 @Override
                                 public void onAnimationStart(Animation animation) {
 
                                 }
 
+                                @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                                 @Override
                                 public void onAnimationEnd(Animation animation) {
-                                    for (int i = 0; i < vocabulary.length(); i++) {
-                                        Button btnAnswer = (Button) flbAnswerArea.getChildAt(i);
-                                        btnAnswer.setTextColor(getResources().getColor(R.color.colorPrimary));
+                                    if (heart == 0) {
+                                        if (score > restoreHighScore()) {
+                                            saveHighScore(score);
+                                            showAnswerDialog(getString(R.string.high_score_title));
+                                            return;
+                                        }
+                                        speakText(vocabularies.get(currentVocabulary).english);
+                                        showAnswerDialog(generateGameOverTitle());
+
+                                    } else {
+                                        for (int i = 0; i < vocabulary.length(); i++) {
+                                            Button btnAnswer = (Button) flbAnswerArea.getChildAt(i);
+                                            btnAnswer.setTextColor(getResources().getColor(R.color.colorPrimary));
+                                        }
                                     }
                                 }
 
@@ -290,51 +339,111 @@ public class WordGuessModeActivity extends AppCompatActivity implements Constant
         }
     };
 
-    private void showAnswerDialog() {
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void showAnswerDialog(String congratulation) {
         final Dialog dlgShowAnswer = new Dialog(this, android.R.style.Theme_Light_NoTitleBar_Fullscreen);
         dlgShowAnswer.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dlgShowAnswer.setContentView(R.layout.dialog_show_answer);
-        dlgShowAnswer.getWindow().getAttributes().windowAnimations = R.style.FullScreenDialogAnimation;
+        Objects.requireNonNull(dlgShowAnswer.getWindow()).getAttributes().windowAnimations = R.style.FullScreenDialogAnimation;
 
         TextView tvCongratulation = dlgShowAnswer.findViewById(R.id.tvCongratulation);
         TextView tvAnswer = dlgShowAnswer.findViewById(R.id.tvAnswer);
         final Button btnNext = dlgShowAnswer.findViewById(R.id.btnNext);
+        TextView tvYourScore = dlgShowAnswer.findViewById(R.id.tvYourScore);
+        TextView tvHighScore = dlgShowAnswer.findViewById(R.id.tvHighScore);
+        Button btnReplay = dlgShowAnswer.findViewById(R.id.btnReplay);
+        Button btnShare = dlgShowAnswer.findViewById(R.id.btnShare);
+        Button btnChooseTopic = dlgShowAnswer.findViewById(R.id.btnChooseTopic);
 
-        tvCongratulation.setText(generateCongratulation());
-        tvAnswer.setText(vocabularies.get(index).english);
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                btnNext.setVisibility(View.VISIBLE);
-            }
-        }, 1500);
-        index += 1;
-        touchCount = 0;
-        guess = "";
+        tvAnswer.setText(vocabularies.get(currentVocabulary).english);
 
-        flbAnswerArea.removeAllViews();
-        flbGuessArea.removeAllViews();
+        if (heart == 0 || currentVocabulary == vocabularies.size() - 1) {
+            tvYourScore.setVisibility(View.VISIBLE);
+            tvYourScore.setText(getString(R.string.your_score, score));
+            tvHighScore.setVisibility(View.VISIBLE);
+            tvHighScore.setText(getString(R.string.high_score, restoreHighScore()));
+            btnReplay.setVisibility(View.VISIBLE);
+            btnShare.setVisibility(View.VISIBLE);
+            btnChooseTopic.setVisibility(View.VISIBLE);
+            dlgShowAnswer.setCancelable(false);
+            dlgShowAnswer.setCanceledOnTouchOutside(false);
+            tvCongratulation.setText(congratulation);
 
-        btnNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dlgShowAnswer.dismiss();
-                flbGuessArea.setVisibility(View.VISIBLE);
-                initPlayArea();
-            }
-        });
+            btnReplay.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    currentVocabulary = 0;
+                    touchCount = 0;
+                    guess = "";
+                    score = 0;
+                    tvScore.setText(String.valueOf(score));
+                    heart = 1;
+                    tvHeart.setText(String.valueOf(heart));
+                    removePlayArea();
+                    Collections.shuffle(vocabularies);
+                    dlgShowAnswer.dismiss();
+                    initPlayArea();
+                    flbGuessArea.setVisibility(View.VISIBLE);
+                }
+            });
 
-        dlgShowAnswer.setOnKeyListener(new DialogInterface.OnKeyListener() {
-            @Override
-            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_BACK) {
+//            btnShare.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                handler.postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        shareScreenshot();
+//                    }
+//                }, 100);
+//            }
+//        });
+
+            btnChooseTopic.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dlgShowAnswer.dismiss();
+                    finish();
+                    overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
+                }
+            });
+
+        } else {
+            tvCongratulation.setText(congratulation);
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    btnNext.setVisibility(View.VISIBLE);
+                }
+            }, 1500);
+
+            currentVocabulary += 1;
+            touchCount = 0;
+            guess = "";
+
+            removePlayArea();
+
+            btnNext.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
                     dlgShowAnswer.dismiss();
                     flbGuessArea.setVisibility(View.VISIBLE);
                     initPlayArea();
                 }
-                return true;
-            }
-        });
+            });
+
+            dlgShowAnswer.setOnKeyListener(new DialogInterface.OnKeyListener() {
+                @Override
+                public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                    if (keyCode == KeyEvent.KEYCODE_BACK) {
+                        dlgShowAnswer.dismiss();
+                        flbGuessArea.setVisibility(View.VISIBLE);
+                        initPlayArea();
+                    }
+                    return true;
+                }
+            });
+        }
 
         dlgShowAnswer.show();
     }
@@ -344,10 +453,9 @@ public class WordGuessModeActivity extends AppCompatActivity implements Constant
         return arrCon[new Random().nextInt(arrCon.length)];
     }
 
-    private void soundEffect(int sound) {
-        checkSound.reset();
-        checkSound = MediaPlayer.create(getApplicationContext(), sound);
-        checkSound.start();
+    private String generateGameOverTitle() {
+        String[] arrCon = getResources().getStringArray(R.array.game_over_title_array);
+        return arrCon[new Random().nextInt(arrCon.length)];
     }
 
     private RotateAnimation animTeeter() {
@@ -368,18 +476,35 @@ public class WordGuessModeActivity extends AppCompatActivity implements Constant
         return rotate;
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        SharedPreferences pref = getSharedPreferences(PREF_QUESTION_NUMBER, MODE_PRIVATE);
+    private void removePlayArea() {
+        flbAnswerArea.removeAllViews();
+        flbGuessArea.removeAllViews();
+        containerMainImage.removeAllViews();
+    }
+
+    private void disableAnswerButton() {
+        for (int button = 0; button < flbAnswerArea.getChildCount(); button++) {
+            Button btnGuess = (Button) flbAnswerArea.getChildAt(button);
+            btnGuess.setEnabled(false);
+        }
+    }
+
+    private void saveHighScore(int highScore) {
+        SharedPreferences pref = getSharedPreferences(PREF_H_SCORE_WORD_GUESS_MODE, MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
-        editor.putInt(QUESTION_NUMBER, index);
+        editor.putInt(H_SCORE_WORD_GUESS_MODE, highScore);
         editor.apply();
     }
 
+    private int restoreHighScore() {
+        return getSharedPreferences(PREF_H_SCORE_WORD_GUESS_MODE, MODE_PRIVATE)
+                .getInt(H_SCORE_WORD_GUESS_MODE, 0);
+    }
+
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
+    protected void onDestroy() {
+        checkSound.stop();
+        checkSound.release();
+        super.onDestroy();
     }
 }

@@ -62,7 +62,6 @@ public class DataAdapter implements Constant {
                 Topic topic = new Topic();
                 topic.id = cursor.getInt(cursor.getColumnIndex(CM_COL_ID_TOPIC));
                 topic.name = cursor.getString(cursor.getColumnIndex(TP_COL_TOPIC_NAME));
-                topic.imageLink = cursor.getString(cursor.getColumnIndex(CM_COL_IMAGE_LINK));
                 topics.add(topic);
             } while (cursor.moveToNext());
         }
@@ -86,7 +85,7 @@ public class DataAdapter implements Constant {
                 vocabulary.id = cursor.getInt(cursor.getColumnIndex(VC_COL_ID));
                 vocabulary.idTopic = cursor.getInt(cursor.getColumnIndex(CM_COL_ID_TOPIC));
                 vocabulary.english = cursor.getString(cursor.getColumnIndex(VC_COL_ENGLISH));
-                vocabulary.imageLink = cursor.getString(cursor.getColumnIndex(CM_COL_IMAGE_LINK));
+                vocabulary.transcription = cursor.getString(cursor.getColumnIndex(VC_COL_TRANSCRIPTION));
                 vocabulary.vietnamese = cursor.getString(cursor.getColumnIndex(VC_COL_VIETNAMESE));
                 vocabulary.caseA = cursor.getString(cursor.getColumnIndex(VC_COL_CASE_A));
                 vocabulary.caseB = cursor.getString(cursor.getColumnIndex(VC_COL_CASE_B));
@@ -105,7 +104,7 @@ public class DataAdapter implements Constant {
     public List<Vocabulary> getAllVocabularies() {
         List<Vocabulary> vocabularies = new ArrayList<>();
 
-        String sql = "SELECT * FROM " + VOCABULARIES_TABLE + " ORDER BY " + VC_COL_ENGLISH;
+        String sql = "SELECT * FROM " + VOCABULARIES_TABLE;
 
         Cursor cursor = db.rawQuery(sql, null);
 
@@ -114,8 +113,12 @@ public class DataAdapter implements Constant {
                 Vocabulary vocabulary = new Vocabulary();
                 vocabulary.id = cursor.getInt(cursor.getColumnIndex(VC_COL_ID));
                 vocabulary.english = cursor.getString(cursor.getColumnIndex(VC_COL_ENGLISH));
-                vocabulary.imageLink = cursor.getString(cursor.getColumnIndex(CM_COL_IMAGE_LINK));
+                vocabulary.transcription = cursor.getString(cursor.getColumnIndex(VC_COL_TRANSCRIPTION));
                 vocabulary.vietnamese = cursor.getString(cursor.getColumnIndex(VC_COL_VIETNAMESE));
+                vocabulary.caseA = cursor.getString(cursor.getColumnIndex(VC_COL_CASE_A));
+                vocabulary.caseB = cursor.getString(cursor.getColumnIndex(VC_COL_CASE_B));
+                vocabulary.caseC = cursor.getString(cursor.getColumnIndex(VC_COL_CASE_C));
+                vocabulary.caseD = cursor.getString(cursor.getColumnIndex(VC_COL_CASE_D));
                 vocabularies.add(vocabulary);
 
             } while (cursor.moveToNext());

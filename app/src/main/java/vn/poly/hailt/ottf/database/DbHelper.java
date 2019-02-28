@@ -1,5 +1,6 @@
 package vn.poly.hailt.ottf.database;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.SQLException;
@@ -24,6 +25,7 @@ public class DbHelper extends SQLiteOpenHelper implements Constant {
     private SQLiteDatabase db;
     private final Context context;
 
+    @SuppressLint("SdCardPath")
     public DbHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
 

@@ -6,11 +6,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-
-import com.bumptech.glide.Glide;
+import android.widget.TextView;
 
 import java.util.List;
+import java.util.Random;
 
 import vn.poly.hailt.ottf.R;
 import vn.poly.hailt.ottf.model.Vocabulary;
@@ -44,9 +43,8 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageHolder>
     @Override
     public void onBindViewHolder(@NonNull ImageHolder holder, int position) {
         Vocabulary vocabulary = vocabularies.get(position);
-        Glide.with(context)
-                .load(vocabulary.imageLink)
-                .into((holder.imgThing));
+        holder.tvEnglish.setText(vocabulary.english);
+        holder.tvEnglish.setTextColor(generateColor());
     }
 
     @Override
@@ -57,12 +55,12 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageHolder>
 
     class ImageHolder extends RecyclerView.ViewHolder {
 
-        private final ImageView imgThing;
+        private final TextView tvEnglish;
 
         ImageHolder(final View itemView) {
             super(itemView);
 
-            imgThing = itemView.findViewById(R.id.imgThing);
+            tvEnglish = itemView.findViewById(R.id.tvEnglish);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -74,6 +72,11 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageHolder>
             });
 
         }
+    }
+
+    private int generateColor() {
+        int[] colors = context.getResources().getIntArray(R.array.colors);
+        return colors[new Random().nextInt(colors.length)];
     }
 
 }

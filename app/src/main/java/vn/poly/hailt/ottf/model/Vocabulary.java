@@ -5,7 +5,7 @@ public class Vocabulary {
     public int id;
     public int idTopic;
     public String english;
-    public String imageLink;
+    public String transcription;
     public String vietnamese;
     public String caseA;
     public String caseB;
