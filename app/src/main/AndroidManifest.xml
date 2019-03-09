@@ -47,7 +47,7 @@
         <activity
             android:name=".ui.LearnActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize|adjustPan" />
+            android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".ui.SelectionModeActivity"

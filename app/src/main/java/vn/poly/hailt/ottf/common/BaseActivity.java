@@ -15,8 +15,9 @@ import java.util.Locale;
 import java.util.Random;
 
 import vn.poly.hailt.ottf.R;
+import vn.poly.hailt.ottf.util.KeyboardVisibilityEvent;
 
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity implements KeyboardVisibilityEvent.KeyboardVisibilityEventListener {
 
     private TextToSpeech textToSpeech;
 
@@ -25,11 +26,20 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutID());
         onCreateActivity(savedInstanceState);
+
+        KeyboardVisibilityEvent.setEventListener(this, this);
     }
 
     protected abstract int getLayoutID();
 
     protected abstract void onCreateActivity(Bundle savedInstanceState);
+
+
+    @Override
+    public void onVisibilityChanged(boolean isOpen) {
+//        Toast.makeText(this, "keyboard show: " + isOpen, Toast.LENGTH_SHORT).show();
+        // TODO: 09/03/2019 override if need
+    }
 
     public void initTextToSpeech() {
         textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
@@ -94,4 +104,5 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
     }
+
 }

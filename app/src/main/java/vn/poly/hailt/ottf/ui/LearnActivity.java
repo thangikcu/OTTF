@@ -5,16 +5,13 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.SearchManager;
 import android.content.Context;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.OvershootInterpolator;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -62,6 +59,15 @@ public class LearnActivity extends BaseActivity {
         if (vocabularies.size() > 0)
             loadVocabulary(vocabularies.get(0));
         initRecyclerView();
+    }
+
+    @Override
+    public void onVisibilityChanged(boolean isOpen) {
+        super.onVisibilityChanged(isOpen);
+
+        if (containerMainImage != null) {
+            containerMainImage.setVisibility(isOpen ? View.GONE : View.VISIBLE);
+        }
     }
 
     private void animateAndSpeakVocabulary(List<View> views, final Vocabulary vocabulary) {
