@@ -62,7 +62,7 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicHolder>
         if (isAllImage) {
             holder.imgTopic.setImageResource(imgTopicID[position]);
         } else {
-            holder.imgTopic.setImageResource(imgTopicID[position+1]);
+            holder.imgTopic.setImageResource(imgTopicID[position + 1]);
         }
         holder.tvTopic.setText(topic.name);
     }
@@ -95,4 +95,5 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicHolder>
 
         }
     }
+
 }

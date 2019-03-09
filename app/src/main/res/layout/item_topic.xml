@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="128dp"
     android:layout_margin="10dp"
-    app:cardCornerRadius="10dp"
-    app:cardPreventCornerOverlap="false">
+    android:background="@drawable/bg_item_topic">
 
     <ImageView
         android:id="@+id/imgTopic"
@@ -13,19 +11,18 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="9dp"
-        android:contentDescription="@string/img_topic"
-        />
+        android:contentDescription="@string/img_topic" />
 
     <TextView
         android:id="@+id/tvTopic"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="#32cd32"
+        android:background="@drawable/bg_title_topic"
         android:padding="4dp"
         android:textAlignment="center"
         android:textColor="@color/colorTextPrimary"
         android:textSize="16sp" />
 
-</android.support.v7.widget.CardView>
+</FrameLayout>
 

@@ -4,6 +4,7 @@
     <string name="logo">Logo</string>
     <string name="img_topic">Image Topic</string>
     <string name="img_thing">Image Thing</string>
+    <string name="img_search">Image Search</string>
     <string name="game_over">Trò chơi kết thúc</string>
     <string name="information">Thông tin</string>
     <string name="app_full_name">1 2 3 4 - English Vocabulary</string>
@@ -19,15 +20,16 @@
 
     <string name="facebook_app_id">1805614062898528</string>
     <string name="fb_login_protocol_scheme">fb1805614062898528</string>
+
     <string name="victory">Chiến thắng</string>
     <string name="topic">Chủ đề</string>
     <string name="double_back_to_exit">Ấn \"Quay lại\" một lần nữa để thoát</string>
     <string name="choose_mode">Chọn chế độ</string>
     <string name="selection_mode">Lựa chọn</string>
     <string name="word_guess_mode">Ghép chữ</string>
-    <string name="question_number">Câu số %1$d</string>
     <string name="intro_of_answer">Đáp án của câu hỏi này là</string>
     <string name="noti_wrong_answer">Câu trả lời của bạn chưa đúng</string>
+
 
     <string-array name="congratulation_array">
         <item>Chúc mừng</item>

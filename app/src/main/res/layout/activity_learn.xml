@@ -1,60 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/img_background"
-    tools:context=".ui.LearnActivity"
-    tools:ignore="Overdraw">
-
-    <include
-        android:id="@+id/iclHeader"
-        layout="@layout/header" />
+    android:fillViewport="true"
+    android:fitsSystemWindows="true">
 
 
-    <LinearLayout
-        android:id="@+id/containerMainImage"
-        android:layout_width="256dp"
-        android:layout_height="170dp"
-        android:layout_below="@id/iclHeader"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="64dp"
-        android:background="@drawable/bg_main_image"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/tvEnglish"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:textSize="24sp" />
-
-        <TextView
-            android:id="@+id/tvTranscription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:textSize="24sp" />
-
-        <TextView
-            android:id="@+id/tvVietnamese"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:textSize="24sp" />
-
-    </LinearLayout>
-
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/lvImage"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="62dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="-8dp"
-        android:layout_marginRight="-8dp"
-        android:layout_marginBottom="16dp" />
+        android:layout_height="wrap_content"
+        android:background="@drawable/img_background"
 
-</RelativeLayout>
+        tools:context=".ui.LearnActivity"
+        tools:ignore="Overdraw">
+
+        <android.support.v7.widget.SearchView
+            android:id="@+id/svVocabulary"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@drawable/bg_item_topic"
+            app:queryHint="Nhập từ cần tìm..."
+            android:visibility="invisible"
+            app:searchHintIcon="@drawable/ic_search" />
+
+        <RelativeLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <include
+                android:id="@+id/iclHeader"
+                layout="@layout/header" />
+
+            <ImageView
+                android:id="@+id/imgSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:contentDescription="@string/img_search"
+                android:src="@drawable/ic_search"
+                android:textSize="18sp" />
+        </RelativeLayout>
+
+
+        <LinearLayout
+            android:id="@+id/containerMainImage"
+            android:layout_width="256dp"
+            android:layout_height="170dp"
+            android:layout_below="@id/header"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="64dp"
+            android:background="@drawable/bg_main_image"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvEnglish"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/tvTranscription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/tvVietnamese"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:textSize="24sp" />
+
+        </LinearLayout>
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/lvImage"
+            android:layout_width="match_parent"
+            android:layout_height="62dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="-8dp"
+            android:layout_marginRight="-8dp"
+            android:layout_marginBottom="16dp" />
+
+    </RelativeLayout>
+
+</ScrollView>

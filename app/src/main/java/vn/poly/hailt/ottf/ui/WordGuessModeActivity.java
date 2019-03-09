@@ -3,6 +3,7 @@ package vn.poly.hailt.ottf.ui;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.MediaPlayer;
@@ -10,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.RequiresApi;
+import android.util.DisplayMetrics;
 import android.util.SparseIntArray;
 import android.view.KeyEvent;
 import android.view.View;
@@ -24,6 +26,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.model.SharePhoto;
+import com.facebook.share.model.SharePhotoContent;
+import com.facebook.share.widget.ShareDialog;
 import com.google.android.flexbox.FlexboxLayout;
 
 import java.util.Arrays;
@@ -64,6 +70,9 @@ public class WordGuessModeActivity extends BaseActivity implements Constant {
     private int score = 0;
     private int heart = 1;
 
+    private Dialog dlgShowAnswer;
+    private ShareDialog shareDialog;
+
     @Override
     protected int getLayoutID() {
         return R.layout.activity_word_guess_mode;
@@ -80,6 +89,7 @@ public class WordGuessModeActivity extends BaseActivity implements Constant {
         initActions();
 
         initPlayArea();
+
     }
 
     private void initViews() {
@@ -95,6 +105,8 @@ public class WordGuessModeActivity extends BaseActivity implements Constant {
 
         flbAnswerArea = findViewById(R.id.flbAnswerArea);
         flbGuessArea = findViewById(R.id.flbGuessArea);
+
+        shareDialog = new ShareDialog(this);
     }
 
     private void initActions() {
@@ -140,61 +152,53 @@ public class WordGuessModeActivity extends BaseActivity implements Constant {
             String letter = String.valueOf(alphabet.charAt(r.nextInt(alphabet.length())));
             lettersList.add(letter);
         }
-
         Collections.shuffle(lettersList);
 
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
+        LinearLayout.LayoutParams lpGuess = new LinearLayout.LayoutParams(edgeOfButton(), edgeOfButton());
+        lpGuess.setMargins(4, 4, 4, 4);
 
-                int edgeOfButtonAnswer = flbAnswerArea.getWidth() / 8 - 8;
-                LinearLayout.LayoutParams lpGuess = new LinearLayout.LayoutParams(edgeOfButtonAnswer, edgeOfButtonAnswer);
-                lpGuess.setMargins(4, 4, 4, 4);
+        LinearLayout.LayoutParams lpAnswer = new LinearLayout.LayoutParams(edgeOfButton() - 4, edgeOfButton() - 4);
+        lpAnswer.setMargins(4, 4, 4, 4);
 
-                int edgeOfButtonGuess = flbGuessArea.getWidth() / 8 - 16;
-                LinearLayout.LayoutParams lpAnswer = new LinearLayout.LayoutParams(edgeOfButtonGuess, edgeOfButtonGuess);
-                lpAnswer.setMargins(4, 4, 4, 4);
+        for (int i = 0; i < vocabulary.length(); i++) {
+            Button button = new Button(WordGuessModeActivity.this);
 
-                for (int i = 0; i < vocabulary.length(); i++) {
-                    Button button = new Button(WordGuessModeActivity.this);
+            button.setLayoutParams(lpAnswer);
+            button.setAllCaps(true);
+            button.setBackgroundResource(R.drawable.btn_letter_answer);
+            button.setTextColor(getResources().getColor(R.color.colorPrimary));
+            button.setTypeface(button.getTypeface(), Typeface.BOLD);
+            button.setPadding(0, 0, 0, 0);
+            flbAnswerArea.addView(button);
+        }
 
-                    button.setLayoutParams(lpAnswer);
-                    button.setAllCaps(true);
-                    button.setBackgroundResource(R.drawable.btn_letter_answer);
-                    button.setTextColor(getResources().getColor(R.color.colorPrimary));
-                    button.setTypeface(button.getTypeface(), Typeface.BOLD);
-                    button.setPadding(0, 0, 0, 0);
-                    flbAnswerArea.addView(button);
-                }
+        for (int i = 0; i < 16; i++) {
+            Button button = new Button(WordGuessModeActivity.this);
+            button.setText(lettersList.get(i));
+            button.setLayoutParams(lpGuess);
+            button.setAllCaps(true);
+            button.setTextColor(getResources().getColor(R.color.colorTextPrimary));
+            button.setBackgroundResource(R.drawable.btn_letter_guess);
+            button.setTypeface(button.getTypeface(), Typeface.BOLD);
+            button.setPadding(0, 0, 0, 0);
+            flbGuessArea.addView(button);
+        }
 
-                for (int i = 0; i < 16; i++) {
-                    Button button = new Button(WordGuessModeActivity.this);
-                    button.setText(lettersList.get(i));
-                    button.setLayoutParams(lpGuess);
-                    button.setAllCaps(true);
-                    button.setTextColor(getResources().getColor(R.color.colorTextPrimary));
-                    button.setBackgroundResource(R.drawable.btn_letter_guess);
-                    button.setTypeface(button.getTypeface(), Typeface.BOLD);
-                    button.setPadding(0, 0, 0, 0);
-                    flbGuessArea.addView(button);
-                }
+        for (int child = 0; child < flbGuessArea.getChildCount(); child++) {
 
-                for (int child = 0; child < flbGuessArea.getChildCount(); child++) {
+            Button btnGuess = (Button) flbGuessArea.getChildAt(child);
+            btnGuess.setOnClickListener(btnGuessListener);
 
-                    Button btnGuess = (Button) flbGuessArea.getChildAt(child);
-                    btnGuess.setOnClickListener(btnGuessListener);
+        }
 
-                }
+        for (int child = 0; child < flbAnswerArea.getChildCount(); child++) {
 
-                for (int child = 0; child < flbAnswerArea.getChildCount(); child++) {
+            Button btnGuess = (Button) flbAnswerArea.getChildAt(child);
+            btnGuess.setOnClickListener(btnAnswerListener);
 
-                    Button btnGuess = (Button) flbAnswerArea.getChildAt(child);
-                    btnGuess.setOnClickListener(btnAnswerListener);
-
-                }
-            }
-        }, 100);
+        }
     }
+
 
     private View.OnClickListener btnGuessListener = new View.OnClickListener() {
         @Override
@@ -288,15 +292,14 @@ public class WordGuessModeActivity extends BaseActivity implements Constant {
                                 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                                 @Override
                                 public void onAnimationEnd(Animation animation) {
+                                    speakText(vocabularies.get(currentVocabulary).english);
                                     if (heart == 0) {
                                         if (score > restoreHighScore()) {
                                             saveHighScore(score);
                                             showAnswerDialog(getString(R.string.high_score_title));
-                                            return;
+                                        } else {
+                                            showAnswerDialog(generateGameOverTitle());
                                         }
-                                        speakText(vocabularies.get(currentVocabulary).english);
-                                        showAnswerDialog(generateGameOverTitle());
-
                                     } else {
                                         for (int i = 0; i < vocabulary.length(); i++) {
                                             Button btnAnswer = (Button) flbAnswerArea.getChildAt(i);
@@ -341,7 +344,7 @@ public class WordGuessModeActivity extends BaseActivity implements Constant {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void showAnswerDialog(String congratulation) {
-        final Dialog dlgShowAnswer = new Dialog(this, android.R.style.Theme_Light_NoTitleBar_Fullscreen);
+        dlgShowAnswer = new Dialog(this, android.R.style.Theme_Light_NoTitleBar_Fullscreen);
         dlgShowAnswer.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dlgShowAnswer.setContentView(R.layout.dialog_show_answer);
         Objects.requireNonNull(dlgShowAnswer.getWindow()).getAttributes().windowAnimations = R.style.FullScreenDialogAnimation;
@@ -387,17 +390,17 @@ public class WordGuessModeActivity extends BaseActivity implements Constant {
                 }
             });
 
-//            btnShare.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                handler.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        shareScreenshot();
-//                    }
-//                }, 100);
-//            }
-//        });
+            btnShare.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            shareScreenshot();
+                        }
+                    }, 100);
+                }
+            });
 
             btnChooseTopic.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -458,6 +461,12 @@ public class WordGuessModeActivity extends BaseActivity implements Constant {
         return arrCon[new Random().nextInt(arrCon.length)];
     }
 
+    private int edgeOfButton() {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        return displayMetrics.widthPixels / 8 - 12;
+    }
+
     private RotateAnimation animTeeter() {
 
         RotateAnimation rotate = new RotateAnimation(10, -10, Animation.RELATIVE_TO_SELF,
@@ -490,15 +499,38 @@ public class WordGuessModeActivity extends BaseActivity implements Constant {
     }
 
     private void saveHighScore(int highScore) {
-        SharedPreferences pref = getSharedPreferences(PREF_H_SCORE_WORD_GUESS_MODE, MODE_PRIVATE);
+        SharedPreferences pref = getSharedPreferences(PREF_HIGH_SCORE, MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putInt(H_SCORE_WORD_GUESS_MODE, highScore);
         editor.apply();
     }
 
     private int restoreHighScore() {
-        return getSharedPreferences(PREF_H_SCORE_WORD_GUESS_MODE, MODE_PRIVATE)
+        return getSharedPreferences(PREF_HIGH_SCORE, MODE_PRIVATE)
                 .getInt(H_SCORE_WORD_GUESS_MODE, 0);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private Bitmap dialogView() {
+        View v = Objects.requireNonNull(dlgShowAnswer.getWindow()).getDecorView().getRootView();
+        v.setDrawingCacheEnabled(true);
+        Bitmap bitmap = Bitmap.createBitmap(v.getDrawingCache());
+        v.setDrawingCacheEnabled(false);
+        return bitmap;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void shareScreenshot() {
+        if (ShareDialog.canShow(ShareLinkContent.class)) {
+
+            SharePhoto photo = new SharePhoto.Builder()
+                    .setBitmap(dialogView())
+                    .build();
+            SharePhotoContent content = new SharePhotoContent.Builder()
+                    .addPhoto(photo)
+                    .build();
+            shareDialog.show(content);
+        }
     }
 
     @Override

@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -17,7 +18,7 @@ import vn.poly.hailt.ottf.model.Vocabulary;
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageHolder> {
 
     private final Context context;
-    private final List<Vocabulary> vocabularies;
+    private List<Vocabulary> vocabularies;
     private OnItemClickListener listener;
 
     public interface OnItemClickListener {
@@ -36,7 +37,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageHolder>
     @NonNull
     @Override
     public ImageHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_image, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_extra_image, parent, false);
         return new ImageHolder(view);
     }
 
@@ -77,6 +78,15 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageHolder>
     private int generateColor() {
         int[] colors = context.getResources().getIntArray(R.array.colors);
         return colors[new Random().nextInt(colors.length)];
+    }
+
+    public Vocabulary getItem(int position) {
+        return vocabularies.get(position);
+    }
+
+    public void filterList(ArrayList<Vocabulary> filteredList) {
+        vocabularies = filteredList;
+        notifyDataSetChanged();
     }
 
 }

@@ -388,14 +388,14 @@ public class SelectionModeActivity extends BaseActivity implements Constant {
     }
 
     private void saveHighScore(int highScore) {
-        SharedPreferences pref = getSharedPreferences(PREF_H_SCORE_SELECTION_MODE, MODE_PRIVATE);
+        SharedPreferences pref = getSharedPreferences(PREF_HIGH_SCORE, MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putInt(H_SCORE_SELECTION_MODE, highScore);
         editor.apply();
     }
 
     private int restoreHighScore() {
-        return getSharedPreferences(PREF_H_SCORE_SELECTION_MODE, MODE_PRIVATE)
+        return getSharedPreferences(PREF_HIGH_SCORE, MODE_PRIVATE)
                 .getInt(H_SCORE_SELECTION_MODE, 0);
     }
 

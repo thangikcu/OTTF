@@ -4,10 +4,8 @@ public interface Constant {
     String PREF_SOUND = "SoundPref";
     String IS_SOUND = "isSound";
 
-    String PREF_H_SCORE_SELECTION_MODE = "HighScoreSelectionModePref";
+    String PREF_HIGH_SCORE = "HighScorePref";
     String H_SCORE_SELECTION_MODE = "highScoreSelectionMode";
-
-    String PREF_H_SCORE_WORD_GUESS_MODE = "HighScoreWordGuessModePref";
     String H_SCORE_WORD_GUESS_MODE = "highScoreWordGuessMode";
 
     String TOPICS_TABLE = "Topics";

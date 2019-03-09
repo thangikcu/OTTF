@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_dlg_show_answer"
-    android:gravity="center_horizontal"
-    android:orientation="vertical">
+    android:background="@drawable/bg_dlg_show_answer">
 
     <TextView
         android:id="@+id/tvCongratulation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
         android:background="@drawable/bg_tv_congratulation"
         android:paddingLeft="32dp"
@@ -19,8 +18,11 @@
         android:textSize="48sp" />
 
     <RelativeLayout
+        android:id="@+id/containerSpeech"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/tvCongratulation"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="48dp">
 
         <TextView
@@ -45,8 +47,11 @@
     </RelativeLayout>
 
     <ImageView
+        android:id="@+id/imgLogo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/containerSpeech"
+        android:layout_centerHorizontal="true"
         android:contentDescription="@string/logo"
         android:src="@drawable/img_logo" />
 
@@ -54,6 +59,8 @@
         android:id="@+id/btnNext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/imgLogo"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="48dp"
         android:background="@drawable/btn_next_selector"
         android:visibility="gone" />
@@ -62,6 +69,8 @@
         android:id="@+id/tvYourScore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/imgLogo"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="24dp"
         android:layout_marginBottom="8dp"
         android:text="@string/your_score"
@@ -73,6 +82,8 @@
         android:id="@+id/tvHighScore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/tvYourScore"
+        android:layout_centerHorizontal="true"
         android:layout_marginBottom="16dp"
         android:text="@string/high_score"
         android:textColor="@color/colorTextPrimary"
@@ -81,7 +92,9 @@
 
     <GridLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvHighScore"
+        android:layout_centerHorizontal="true">
 
         <Button
             android:id="@+id/btnReplay"
@@ -111,4 +124,15 @@
 
     </GridLayout>
 
-</LinearLayout>
+    <!--<com.google.android.gms.ads.AdView-->
+        <!--xmlns:ads="http://schemas.android.com/apk/res-auto"-->
+        <!--android:id="@+id/bannerAds"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--ads:adSize="BANNER"-->
+        <!--ads:adUnitId="@string/ad_mob_banner_unit_id">-->
+    <!--</com.google.android.gms.ads.AdView>-->
+
+</RelativeLayout>
