@@ -1,28 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:fitsSystemWindows="true">
+    tools:context=".ui.LearnActivity">
 
-
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/img_background"
-
-        tools:context=".ui.LearnActivity"
-        tools:ignore="Overdraw">
+        android:background="@drawable/img_background">
 
         <android.support.v7.widget.SearchView
             android:id="@+id/svVocabulary"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@drawable/bg_item_topic"
-            app:queryHint="Nhập từ cần tìm..."
             android:visibility="invisible"
+            app:queryHint="Nhập từ cần tìm..."
             app:searchHintIcon="@drawable/ic_search" />
 
         <RelativeLayout
